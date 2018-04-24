@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<CREOLE-DIRECTORY 
+  ID="com.jpetrak.StringAnnotation" 
+  VERSION="3.5" 
+  DESCRIPTION="Extended Gazetteer, Java Regular Expression Annotator"
+  HELPURL="http://github.com/johann-petrak/gateplugin-stringannotation/wiki"
+  >
+</CREOLE-DIRECTORY>
