@@ -17,3 +17,7 @@ junit-noframes.html
 
 hs_err_*.log
 /target
+
+.classpath
+.project
+/.settings

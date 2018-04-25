@@ -1,13 +1,9 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <name>StringAnnotation Plugin</name>
+  <name>StringAnnotation</name>
   <description>This plugin provides support for annotating documents based on 
-    gazetteer lists and Java regular expressions. Entries in gazetteer lists
-    can be matched against the document text or text corresponding to the 
-    values of features in token annotations. Gazetteer entries can get matched
-    against the features in annotations to add additional features, add additional
-    annotations or remove the annotation where the match occurs. 
+    gazetteer lists and Java regular expressions. 
   </description>
   <url>https://github.com/johann-petrak/gateplugin-StringAnnotation</url>
   <parent>
