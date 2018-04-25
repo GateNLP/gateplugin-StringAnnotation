@@ -25,6 +25,26 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+  
+  <organization>
+    <name>GATE</name>
+    <url>http://gate.ac.uk</url>
+  </organization>
+	
+  <developers>
+    <developer>
+      <id>gate-team</id>
+      <name>GATE Team</name>
+      <email>gate-developers@lists.sourceforge.net</email>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com/GateNLP/gateplugin-StringAnnotation.git</connection>
+    <developerConnection>scm:git:git@github.com:GateNLP/gateplugin-StringAnnotation.git</developerConnection>
+    <url>https://github.com/GateNLP/gateplugin-StringAnnotation</url>
+  </scm>
+  
   <dependencies>
     <dependency>
       <groupId>commons-cli</groupId>
