@@ -38,8 +38,8 @@ public class UrlUtils {
   /**
    * Create a URL from the String.
    * If the String does not have a protocol/scheme, file:// is assumed and prepended.
-   * @param str
-   * @return 
+   * @param str the string to convert to a URL
+   * @return the URL created from the string
    */
   public static URL newURL(String str) {
     try {
@@ -62,8 +62,6 @@ public class UrlUtils {
    * <p>
    * Note: if the dirURL contains a query and/or a fragment, those parts are 
    * lost in the resulting URL.
-   * @param dir
-   * @param file 
    */
   public static URL newURL(URL dirURL, String fileName) {
     URI dirURI;
@@ -96,8 +94,6 @@ public class UrlUtils {
   
   /**
    * Return the last path component of a hierarchical path of URL.
-   * @param url
-   * @return 
    */
   public static String getName(URL url) {
     URI uri;
@@ -126,7 +122,6 @@ public class UrlUtils {
    * Return the parent path for a URL.
    * This is the path, with the last component of the path removed, i.e.
    * with that part removed that is returned by the getName() method.
-   * 
    */
   public static URL getParentURL(URL url) {
     URL ret;
@@ -150,9 +145,6 @@ public class UrlUtils {
   
   /** 
    * Returns true if the URL can be opened for reading.
-   * 
-   * @param url
-   * @return 
    */
   public static boolean exists(URL url) {
     boolean ret = true;
@@ -165,9 +157,7 @@ public class UrlUtils {
   }
   
   /**
-   * Return truen if the URL is a file URL.
-   * @param url
-   * @return 
+   * Return truen if the URL is a file URL. 
    */
   public static boolean isFile(URL url) {
     return "file".equals(url.getProtocol());
