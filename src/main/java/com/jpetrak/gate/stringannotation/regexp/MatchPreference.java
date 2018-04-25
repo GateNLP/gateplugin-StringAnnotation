@@ -26,7 +26,7 @@ package com.jpetrak.gate.stringannotation.regexp;
 
 /**
  *
- * @author Johann Petrak <johann.petrak@jpetrak.com>
+ * @author Johann Petrak
  */
 public enum MatchPreference {
   ALL, FIRSTRULE, LASTRULE, LONGEST_FIRSTRULE, LONGEST_LASTRULE, LONGEST_ALLRULES

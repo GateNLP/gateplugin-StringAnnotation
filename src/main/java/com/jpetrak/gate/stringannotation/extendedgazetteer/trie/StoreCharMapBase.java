@@ -40,10 +40,6 @@ public abstract class StoreCharMapBase implements Serializable {
    * Adds a new state for the given char to the char map. If mapIndex less than zero,
    * then the charmap will be created and its new index returned, otherwise, the charmap
    * at the given index will be used and the given index returned back. 
-   * @param mapIndex
-   * @param key
-   * @param value
-   * @return
    */
   //public abstract int putOld(int mapIndex, char key, State state);
   public abstract int put(int mapIndex, char key, int state);

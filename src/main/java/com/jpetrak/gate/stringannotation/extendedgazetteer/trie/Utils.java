@@ -24,9 +24,6 @@ public class Utils {
   
   /** 
    * Converts two characters two an int number
-   * 
-   * @param chars
-   * @return
    */
   public static int twoChars2Int(char ch, char cl) {
     int l = (ch << 16) + cl;
@@ -43,8 +40,6 @@ public class Utils {
   /**
    * Converts an int into an array of two characters with the high bits
    * in the first element and the low bits in the second element
-   * @param i
-   * @return
    */
   public static char[] int2TwoChars(int i) {
     char[] asChars = new char[2];
@@ -56,9 +51,6 @@ public class Utils {
   /**
    * Sets two characters at position pos to the representation of int as two successive 
    * characters.
-   * @param i
-   * @param chars
-   * @param pos
    */
   public static void setTwoCharsFromInt(int i, char[] chars, int pos) {
     chars[pos] =  (char)(i >>> 16);
@@ -68,9 +60,6 @@ public class Utils {
   
   /** 
    * Converts four characters two a long number
-   * 
-   * @param chars
-   * @return
    */
   public static long fourChars2Long(char c4, char c3, char c2, char c1) {
     long l = c1;
@@ -90,8 +79,6 @@ public class Utils {
   
   /**
    * Converts a long to a char array of four elements
-   * @param i
-   * @return
    */
   public static char[] long2FourChars(long i) {
     char[] asChars = new char[4];

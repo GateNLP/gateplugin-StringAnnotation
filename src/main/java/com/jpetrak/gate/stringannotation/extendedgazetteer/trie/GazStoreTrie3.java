@@ -85,10 +85,6 @@ public class GazStoreTrie3 extends GazStore {
   
   /**
    * Add a new lookup to the trie.
-   * @param text
-   * @param infoIndex
-   * @param entryFeatures
-   * @return
    */
   public void addLookup(String text, int infoIndex, String[] entryFeatures) {
   char currentChar;

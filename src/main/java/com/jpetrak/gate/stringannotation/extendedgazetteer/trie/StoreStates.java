@@ -181,10 +181,6 @@ public class StoreStates implements Serializable {
    * Add a new edge to a state: for the given character, add a transition to the 
    * given state (value).
    * This may internally replace an existing single char state with a char map state.
-   *   
-   * @param state
-   * @param key
-   * @param value
    */
   public void put(int state, char key, int to_state) {
     char[] chunk = dataStore.getFixedLengthData(state, 5);

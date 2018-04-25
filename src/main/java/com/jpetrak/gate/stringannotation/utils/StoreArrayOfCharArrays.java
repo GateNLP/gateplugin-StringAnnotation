@@ -288,7 +288,7 @@ public class StoreArrayOfCharArrays implements Serializable {
   
   /** 
    * Find the chunk among all the list elements stored at index and 
-   * return the index of the element (>= 0) if found or -1 if not found.
+   * return the index of the element (&gt;= 0) if found or -1 if not found.
    * 
    * @param index index of the list in the store
    * @param chunk the chunk to find

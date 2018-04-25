@@ -48,7 +48,7 @@ public class StoreCharMapPhase1 extends StoreCharMapBase {
   public StoreCharMapPhase1() {} 
   
   /**
-   * Add a new State to the charmap stored at mapIndex, but if mapIndex < 0,
+   * Add a new State to the charmap stored at mapIndex, but if mapIndex &lt; 0,
    * create a new mapIndex first and return its index. 
    */
   @Override
