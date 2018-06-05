@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <name>String Annotation</name>
-  <description>This plugin provides support for annotating documents based on 
-    gazetteer lists and Java regular expressions. 
+  <description>A GATE plugin that provides processing resources for annotating documents based 
+    on gazetteer lists and Java regular expressions. The gazetteer annotator is able to store 
+    very large gazetteer lists in memory and can match against either the document text or the
+    value of annotation features.
   </description>
   <url>https://github.com/johann-petrak/gateplugin-StringAnnotation</url>
   <groupId>uk.ac.gate.plugins</groupId>
