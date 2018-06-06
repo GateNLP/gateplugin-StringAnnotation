@@ -9,7 +9,7 @@
   <url>https://github.com/johann-petrak/gateplugin-StringAnnotation</url>
   <groupId>uk.ac.gate.plugins</groupId>
   <artifactId>stringannotation</artifactId>
-  <version>4.0-SNAPSHOT</version>
+  <version>4.1-SNAPSHOT</version>
   <organization>
     <name>GATE Team</name>
     <url>http://gate.ac.uk</url>
@@ -43,7 +43,7 @@
   <parent>
     <groupId>uk.ac.gate</groupId>
     <artifactId>gate-plugin-base</artifactId>
-    <version>8.5-SNAPSHOT</version>
+    <version>8.5</version>
     <relativePath/>
   </parent>
   <dependencies>
