@@ -1,0 +1,6 @@
+Some word1 a b and c d.
+c d at the start.
+at the end: b c
+and: c d
+and: c d.
+and: c d e.
