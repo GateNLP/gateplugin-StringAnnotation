@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <name>String Annotation Runner</name>
+  <description>Project to make it easier for scripts to use the String Annotation plugin.
+  </description>
+  <groupId>uk.ac.gate.plugins.runner</groupId>
+  <artifactId>stringannotation-runner</artifactId>
+  <version>4.1-SNAPSHOT</version><!-- PLUGINVERSION -->
+  <organization>
+    <name>GATE Team</name>
+    <url>http://gate.ac.uk</url>
+  </organization>
+  <developers>
+    <developer>
+      <name>Johann Petrak</name>
+      <email>johann.petrak@gmail.com</email>
+      <organization>GATE Team</organization>
+      <organizationUrl>https://gate.ac.uk</organizationUrl>
+    </developer>
+    <developer>
+      <name>GATE Team</name>
+      <email>gate-developers@lists.sourceforge.net</email>
+      <organization>GATE Team</organization>
+      <organizationUrl>https://gate.ac.uk</organizationUrl>
+    </developer>
+  </developers>  
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License (LGPL), Version 3</name>
+      <url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.0.2</version>
+        <executions>
+          <execution>
+            <id>build-classpath</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>build-classpath</goal>
+            </goals>
+            <configuration>
+              <outputFile>stringannotation-runner.classpath</outputFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+ 
+  <dependencies>
+    <dependency>
+      <groupId>uk.ac.gate.plugins</groupId>
+      <artifactId>stringannotation</artifactId>
+      <version>4.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>uk.ac.gate</groupId>
+      <artifactId>gate-core</artifactId>
+      <version>8.5.1</version>
+    </dependency>
+  </dependencies>
+  <modelVersion>4.0.0</modelVersion>
+</project>

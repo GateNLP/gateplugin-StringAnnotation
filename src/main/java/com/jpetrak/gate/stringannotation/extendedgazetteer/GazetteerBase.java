@@ -61,7 +61,6 @@ import java.util.zip.GZIPInputStream;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import static javax.swing.Action.SHORT_DESCRIPTION;
-import org.apache.commons.codec.language.bm.Lang;
 
 import org.yaml.snakeyaml.Yaml;
 
@@ -316,13 +315,17 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     }
   }
 
-  private String getCacheKey() {
+  public static String makeCacheKey(boolean caseSensitive, String caseConversionLanguage) {
     String csIndicator = caseSensitive ? "c1" : "c0";
     String ccl = "en";
     if(caseConversionLanguage != null && !caseConversionLanguage.isEmpty()) {
       ccl = caseConversionLanguage;    
     }
     return csIndicator+"_"+ccl;
+  }
+    
+  private String getCacheKey() {
+    return makeCacheKey(caseSensitive, caseConversionLanguage);
   }
   
   
