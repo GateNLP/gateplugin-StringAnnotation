@@ -61,6 +61,7 @@ import java.util.zip.GZIPInputStream;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import static javax.swing.Action.SHORT_DESCRIPTION;
+import org.apache.commons.codec.language.bm.Lang;
 
 import org.yaml.snakeyaml.Yaml;
 
@@ -315,9 +316,20 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     }
   }
 
+  private String getCacheKey() {
+    String csIndicator = caseSensitive ? "c1" : "c0";
+    String ccl = "en";
+    if(caseConversionLanguage != null && !caseConversionLanguage.isEmpty()) {
+      ccl = caseConversionLanguage;    
+    }
+    return csIndicator+"_"+ccl;
+  }
+  
+  
+  
   protected void loadDataFromDef(URL configFileURL) throws IOException {
     String configFileName = configFileURL.toExternalForm();
-    String gazbinFileName = configFileName.replaceAll("\\.def$", ".gazbin");
+    String gazbinFileName = configFileName.replaceAll("\\.def$", "_"+getCacheKey()+".gazbin");
     if (configFileName.equals(gazbinFileName)) {
       throw new GateRuntimeException("Config file must have def or defyaml extension, not " + configFileURL);
     }
@@ -380,7 +392,7 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
   @SuppressWarnings("unchecked")
   protected void loadDataFromYaml(URL configFileURL) throws IOException {
     String configFileName = configFileURL.toExternalForm();
-    String gazbinFileName = configFileName.replaceAll("\\.defyaml$", ".gazbin");
+    String gazbinFileName = configFileName.replaceAll("\\.defyaml$", "_"+getCacheKey()+".gazbin");
     if (configFileName.equals(gazbinFileName)) {
       throw new GateRuntimeException("Config file must have def or defyaml extension");
     }

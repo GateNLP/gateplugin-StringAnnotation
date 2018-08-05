@@ -68,7 +68,8 @@ public class FeatureGazetteer extends GazetteerBase
 
 
   // constants
-  private static boolean debug = false;
+  private static final boolean DEBUG = false;
+  private static final long serialVersionUID = 8004661633385404264L;
   
   
   // *************************************************************************
@@ -218,12 +219,15 @@ public class FeatureGazetteer extends GazetteerBase
       );
     }
 
-    AnnotationSet inputAS = null; 
+    AnnotationSet inputAS; 
     if(inputAnnotationSet == null ||
-       inputAnnotationSet.equals("")) inputAS = theDocument.getAnnotations();
-    else inputAS = theDocument.getAnnotations(inputAnnotationSet);
+       inputAnnotationSet.equals("")) {
+      inputAS = theDocument.getAnnotations();
+    } else {
+      inputAS = theDocument.getAnnotations(inputAnnotationSet);
+    }
 
-    AnnotationSet processAnns = null;
+    AnnotationSet processAnns;
     if(wordAnnotationType == null || wordAnnotationType.isEmpty()) {
       throw new GateRuntimeException("Word annotation type must not be empty!");
     } 
@@ -271,16 +275,24 @@ public class FeatureGazetteer extends GazetteerBase
 
   protected void processMatch(Annotation ann, Iterator<Lookup> lookups, 
       AnnotationSet inputAS, AnnotationSet outputAS) {
-    if(getProcessingMode().equals(FeatureGazetteerProcessingMode.AddFeatures)) {
-      addLookupsToAnn(ann, lookups, false, false);
-    } else if(getProcessingMode().equals(FeatureGazetteerProcessingMode.OverwriteFeatures)) {
-      addLookupsToAnn(ann, lookups, true, false);
-    } else if(getProcessingMode().equals(FeatureGazetteerProcessingMode.OverwriteAndBackupFeatures)) {
-      addLookupsToAnn(ann, lookups, true, true);
-    } else if(getProcessingMode().equals(FeatureGazetteerProcessingMode.RemoveAnnotation)) {
-      inputAS.remove(ann);
-    } else if(getProcessingMode().equals(FeatureGazetteerProcessingMode.AddNewAnnotation)) {
-      addNewAnnotation(ann, lookups, inputAS, outputAS);
+    switch (getProcessingMode()) {
+      case AddFeatures:
+        addLookupsToAnn(ann, lookups, false, false);
+        break;
+      case OverwriteFeatures:
+        addLookupsToAnn(ann, lookups, true, false);
+        break;
+      case OverwriteAndBackupFeatures:
+        addLookupsToAnn(ann, lookups, true, true);
+        break;
+      case RemoveAnnotation:
+        inputAS.remove(ann);
+        break;
+      case AddNewAnnotation:
+        addNewAnnotation(ann, lookups, inputAS, outputAS);
+        break;
+      default:
+        break;
     }
   }
   protected void processNonMatch(Annotation ann, Iterator<Lookup> lookups, 
@@ -362,15 +374,15 @@ public class FeatureGazetteer extends GazetteerBase
   public Iterator<Lookup> doMatch(String theString, boolean matchAtStartOnly, boolean matchAtEndOnly)
       throws ExecutionException {
     interrupted = false;
+    if (theString == null || theString.isEmpty()) {
+      return null;
+    }
     int length = theString.length();
     char currentChar;
     State currentState = gazStore.getInitialState();
 
     //System.out.println("Trying match for "+theString);
     // an empty string never matches
-    if (theString == null || theString.isEmpty()) {
-      return null;
-    }
 
     // if the match is required to start at the begging, we set the
     // upper index of where we try to start from (matchfrom) to 0 otherwise
@@ -389,7 +401,7 @@ public class FeatureGazetteer extends GazetteerBase
     for (int pos = 0; pos <= matchfrom; pos++) {
       for (int i = pos; i < length; i++) {
         currentChar = theString.charAt(i);
-        currentChar = caseSensitive.booleanValue() ? currentChar : Character
+        currentChar = caseSensitive ? currentChar : Character
             .toUpperCase(currentChar);
         currentState = currentState.next(currentChar);
         if (currentState == null) {

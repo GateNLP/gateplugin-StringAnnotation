@@ -23,6 +23,7 @@ package com.jpetrak.gate.stringannotation.extendedgazetteer;
 import gate.Factory;
 import gate.FeatureMap;
 import gate.Gate;
+import gate.creole.ResourceInstantiationException;
 import gate.util.GateException;
 import java.io.File;
 import java.net.MalformedURLException;
@@ -111,7 +112,7 @@ public class GenerateCache {
           (gate.ProcessingResource) Factory.createResource(
                 "com.jpetrak.gate.stringannotation.extendedgazetteer.ExtendedGazetteer",
                 parms);
-      } catch (Exception ex) {
+      } catch (ResourceInstantiationException ex) {
         System.err.println("Error initializing the gazetteer PR");
         ex.printStackTrace(System.err);
         System.exit(1);
