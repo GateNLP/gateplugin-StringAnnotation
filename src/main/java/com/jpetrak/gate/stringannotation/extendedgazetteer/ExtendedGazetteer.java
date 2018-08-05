@@ -264,7 +264,7 @@ public class ExtendedGazetteer extends GazetteerBase {
       outputAS = theDocument.getAnnotations(outputAnnotationSet);
     }
 
-    AnnotationSet processAnns = null;
+    AnnotationSet processAnns;
     if (wordAnnotationType == null || wordAnnotationType.isEmpty()) {
       throw new GateRuntimeException("Word annotation type must not be empty!");
     }
@@ -272,7 +272,7 @@ public class ExtendedGazetteer extends GazetteerBase {
     if (spaceAnnotationType == null || spaceAnnotationType.isEmpty()) {
       throw new GateRuntimeException("Space annotation type must not be empty!");
     }
-    Set<String> typeSet = new HashSet<String>();
+    Set<String> typeSet = new HashSet<>();
     typeSet.add(wordAnnotationType);
     typeSet.add(spaceAnnotationType);
     processAnns = inputAS.get(typeSet);
@@ -291,7 +291,7 @@ public class ExtendedGazetteer extends GazetteerBase {
     } else {
       splitAnns = inputAS.get(splitAnnotationType);
       //System.out.println("DEBUG: got split annots: "+splitAnns.size()+" type is "+splitAnnotationType);
-      if (splitAnns.size() == 0) {
+      if (splitAnns.isEmpty()) {
         splitAnns = null;
       }
     }
@@ -418,7 +418,7 @@ public class ExtendedGazetteer extends GazetteerBase {
     while (charIdx < length) {
       // the character we get here is case normalized if necessary!
       currentChar = chunk.getCharAt(charIdx);
-      currentChar = caseSensitive.booleanValue()
+      currentChar = caseSensitive
               ? currentChar
               : Character.toUpperCase(currentChar);
       nextState = currentState.next(currentChar);
