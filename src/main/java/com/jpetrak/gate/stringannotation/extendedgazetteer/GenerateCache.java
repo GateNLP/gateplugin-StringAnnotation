@@ -28,7 +28,6 @@ import gate.creole.ResourceInstantiationException;
 import gate.util.GateException;
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 
 /**
