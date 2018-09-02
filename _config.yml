@@ -1,0 +1,25 @@
+theme: jekyll-theme-cayman
+
+# IMPORTANT: replace the following with the part of the final URL pathname
+# that comes after the host name but before the actual top index page name.
+# For example for https://gatenlp.github.io/gateplugin-LearningFramework/index.html
+# this would be "/gateplugin-LearningFramework"
+sitebase: /gateplugin-StringAnnotation
+
+# It seems this is the only markdown processor supported currently that also 
+# supports mathjax?
+markdown: kramdown
+kramdown:
+  math_engine: mathjax
+
+# Allow commenting
+comments: true
+
+# TODO: not sure if these actually do something:
+# If no blog is wanted, comment out or remove and also remove the "./blog" subdirectory
+paginate:           2
+paginate_path:      "/blog/page:num/"
+
+plugins:
+- jemoji      
+- jekyll-paginate
