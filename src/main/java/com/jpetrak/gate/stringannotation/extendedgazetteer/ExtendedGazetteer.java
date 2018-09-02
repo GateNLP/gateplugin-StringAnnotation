@@ -51,8 +51,8 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 /**
- * See documentation in the wiki:
- * https://github.com/johann-petrak/gateplugin-stringannotation/wiki/Extended-Gazetteer
+ * See documentation:
+ * https://gatenlp.github.io/gateplugin-StringAnnotation/ExtendedGazetteer
  *
  * @author Johann Petrak
  */
@@ -60,7 +60,7 @@ import org.apache.log4j.Logger;
         name = "Extended Gazetteer",
         comment = "Fast, low-memory footprint gazetteer with many additional features",
         icon = "shefGazetteer.gif",
-        helpURL = "https://github.com/johann-petrak/gateplugin-stringannotation/wiki/Extended-Gazetteer"
+        helpURL = "https://gatenlp.github.io/gateplugin-StringAnnotation/ExtendedGazetteer"
 )
 @SuppressWarnings("javadoc")
 public class ExtendedGazetteer extends GazetteerBase {
