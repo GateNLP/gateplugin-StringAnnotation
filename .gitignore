@@ -7,6 +7,9 @@
 *.jar
 *.war
 *.ear
+*.bak
+
+*.classpath
 
 build.properties
 *.gazbin
@@ -21,3 +24,4 @@ hs_err_*.log
 .classpath
 .project
 /.settings
+/runner/target/

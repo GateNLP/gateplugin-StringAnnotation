@@ -57,7 +57,6 @@ import gate.util.Files;
 import gate.creole.ResourceReference;
 import java.awt.event.ActionEvent;
 import java.io.InputStreamReader;
-import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -74,9 +73,8 @@ import org.yaml.snakeyaml.Yaml;
  */
 public abstract class GazetteerBase extends AbstractLanguageAnalyser implements ActionsPublisher {
 
-  /**
-   *
-   */
+  private static final long serialVersionUID = -6812186693426581898L;
+
   @CreoleParameter(comment = "The URL to the gazetteer configuration file", suffixes = "def;defyaml", defaultValue = "")
   public void setConfigFileURL(ResourceReference theURL) {
     configFileURL = theURL;
@@ -90,7 +88,7 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
   @CreoleParameter(comment = "Should this gazetteer differentiate on case",
           defaultValue = "true")
   public void setCaseSensitive(Boolean yesno) {
-    System.err.println("DEBUG: setting case sensitive to "+yesno);
+    System.err.println("DEBUG: setting case sensitive to " + yesno);
     caseSensitive = yesno;
   }
 
@@ -102,7 +100,7 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
   @CreoleParameter(comment = "For case insensitive matches, the locale to use for normalizing case",
           defaultValue = "en")
   public void setCaseConversionLanguage(String val) {
-    System.err.println("DEBUG: case conversion language set to "+val);
+    System.err.println("DEBUG: case conversion language set to " + val);
     caseConversionLanguage = val;
     caseConversionLocale = new Locale(val);
   }
@@ -113,23 +111,23 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
   protected String caseConversionLanguage;
 
   @CreoleParameter(
-      comment = "The character used to separate features for entries in gazetteer lists. Accepts strings like &quot;\t&quot; and will unescape it to the relevant character. If not specified, a tab character will be used",
-      defaultValue = "\\t"
-      )
+          comment = "The character used to separate features for entries in gazetteer lists. Accepts strings like &quot;\t&quot; and will unescape it to the relevant character. If not specified, a tab character will be used",
+          defaultValue = "\\t"
+  )
   @Optional
   public void setGazetteerFeatureSeparator(String sep) {
     gazetteerFeatureSeparator = sep;
-    if(sep == null || sep.isEmpty()) {
+    if (sep == null || sep.isEmpty()) {
       unescapedSeparator = Strings.unescape("\\t");
     } else {
       unescapedSeparator = Strings.unescape(sep);
     }
   }
+
   public String getGazetteerFeatureSeparator() {
     return gazetteerFeatureSeparator;
-  }  
-  
-  
+  }
+
   protected String gazetteerFeatureSeparator = "\\t";
   protected String unescapedSeparator = Strings.unescape("\\t");
   protected Locale caseConversionLocale = Locale.ENGLISH;
@@ -138,8 +136,8 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
   protected GazStore gazStore;
   private static final int MAX_FEATURES_PER_ENTRY = 500;
   protected static Pattern ws_pattern;
-  protected static final String ws_chars =
-          "\\u0009" // CHARACTER TABULATION
+  protected static final String WS_CHARS
+          = "\\u0009" // CHARACTER TABULATION
           + "\\u000A" // LINE FEED (LF)
           + "\\u000B" // LINE TABULATION
           + "\\u000C" // FORM FEED (FF)
@@ -166,8 +164,8 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
           + "\\u205F" // MEDIUM MATHEMATICAL SPACE
           + "\\u3000" // IDEOGRAPHIC SPACE
           ;
-  protected static final String ws_class = "[" + ws_chars + "]";
-  protected static final String ws_patternstring = ws_class + "+";
+  protected static final String WS_CLASS = "[" + WS_CHARS + "]";
+  protected static final String WS_PATTERNSTRING = WS_CLASS + "+";
   protected static final String UTF8 = "UTF-8";
 
   public GazetteerBase() {
@@ -178,8 +176,8 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
   public Resource init() throws ResourceInstantiationException {
     // precompile the pattern used to replace all unicode whitespace in gazetteer
     // entries with a single space.
-    ws_pattern = Pattern.compile(ws_patternstring);
-    System.err.println("DEBUG: running init(), caseConversionLanguage is "+caseConversionLanguage);
+    ws_pattern = Pattern.compile(WS_PATTERNSTRING);
+    System.err.println("DEBUG: running init(), caseConversionLanguage is " + caseConversionLanguage);
     incrementGazStore();
     return this;
   }
@@ -199,18 +197,18 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
       gazStore = gs;
       gazStore.refcount++;
       logger.info("Reusing already generated GazStore for " + uniqueGazStoreKey);
-      System.err.println("Reusing already generated gaz store for "+uniqueGazStoreKey);
+      System.err.println("Reusing already generated gaz store for " + uniqueGazStoreKey);
     } else {
       try {
         loadData();
         gazStore.compact();
-      } catch (Exception ex) {
+      } catch (ResourceInstantiationException | IOException ex) {
         throw new ResourceInstantiationException("Could not load gazetteer", ex);
       }
-      
+
       gazStore.refcount++;
       loadedGazStores.put(uniqueGazStoreKey, gazStore);
-      System.err.println("DEBUG addeed new gaz store with key "+uniqueGazStoreKey);
+      System.err.println("DEBUG addeed new gaz store with key " + uniqueGazStoreKey);
       logger.info("New GazStore loaded for " + uniqueGazStoreKey);
     }
     long endTime = System.currentTimeMillis();
@@ -232,7 +230,7 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     try {
       loadData();
       gazStore.compact();
-    } catch (Exception ex) {
+    } catch (ResourceInstantiationException | IOException ex) {
       throw new ResourceInstantiationException("Could not load gazetteer", ex);
     }
     loadedGazStores.put(uniqueGazStoreKey, gazStore);
@@ -246,14 +244,13 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
             + String.format("%01.3f", ((after - before) / (1024.0 * 1024.0))));
     logger.info(gazStore.statsString());
   }
-  
-  
+
   public synchronized void decrementGazStore() {
-    System.err.println("DEBUG:  running decrementGazStore, map contains: "+loadedGazStores.keySet());
+    System.err.println("DEBUG:  running decrementGazStore, map contains: " + loadedGazStores.keySet());
     String key = genUniqueGazStoreKey();
-    System.err.println("DEBUG: key for finding the gaz store: "+key);
+    System.err.println("DEBUG: key for finding the gaz store: " + key);
     GazStore gs = loadedGazStores.get(key);
-    System.err.println("DEBUG got a gaz store: "+gs);
+    System.err.println("DEBUG got a gaz store: " + gs);
     gs.refcount--;
     if (gs.refcount == 0) {
       System.err.println("DEBUG: removing gaz store key");
@@ -265,14 +262,14 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
   public synchronized void removeGazStore() {
     System.err.println("DEBUG: running removeGazStore()");
     String key = genUniqueGazStoreKey();
-    System.err.println("DEBUG: removing gazstore key: "+key);
+    System.err.println("DEBUG: removing gazstore key: " + key);
     loadedGazStores.remove(key);
     logger.info("reInit(): force-removing GazStore for " + key);
   }
 
   protected String genUniqueGazStoreKey() {
     String key = " cs=" + caseSensitive + " url=" + configFileURL + " lang=" + caseConversionLanguage;
-    System.err.println("DEBUG: generating the gaz store key: "+key);    
+    System.err.println("DEBUG: generating the gaz store key: " + key);
     return key;
   }
 
@@ -300,15 +297,14 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     // if we find the cache file, load it, else load the original files and create the cache file
 
     //!File configFile = gate.util.Files.fileFromURL(configFileURL);
-
     // check the extension and determine if we have an old format .def file or 
     // a new format .defyaml file
-    String name = UrlUtils.getName(configFileURL.toURL());
-    int i = name.lastIndexOf('.') + 1;
+    String tmp_name = UrlUtils.getName(configFileURL.toURL());
+    int i = tmp_name.lastIndexOf('.') + 1;
     if (i < 0) {
       throw new GateRuntimeException("Config file must have a .def or .defyaml extension");
     }
-    String ext = name.substring(i);
+    String ext = tmp_name.substring(i);
     if (ext.isEmpty() || !(ext.equals("def") || ext.equals("defyaml"))) {
       throw new GateRuntimeException("Config file must have a .def or .defyaml extension");
     }
@@ -319,11 +315,26 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     }
   }
 
+  public static String makeCacheKey(boolean caseSensitive, String caseConversionLanguage) {
+    String csIndicator = caseSensitive ? "c1" : "c0";
+    String ccl = "en";
+    if(caseConversionLanguage != null && !caseConversionLanguage.isEmpty()) {
+      ccl = caseConversionLanguage;    
+    }
+    return csIndicator+"_"+ccl;
+  }
+    
+  private String getCacheKey() {
+    return makeCacheKey(caseSensitive, caseConversionLanguage);
+  }
+  
+  
+  
   protected void loadDataFromDef(URL configFileURL) throws IOException {
     String configFileName = configFileURL.toExternalForm();
-    String gazbinFileName = configFileName.replaceAll("\\.def$", ".gazbin");
+    String gazbinFileName = configFileName.replaceAll("\\.def$", "_"+getCacheKey()+".gazbin");
     if (configFileName.equals(gazbinFileName)) {
-      throw new GateRuntimeException("Config file must have def or defyaml extension, not "+configFileURL);
+      throw new GateRuntimeException("Config file must have def or defyaml extension, not " + configFileURL);
     }
     URL gazbinURL = new URL(gazbinFileName);
 
@@ -341,7 +352,7 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
           if (fields.length == 0) {
             System.err.println("Empty line in file " + configFileURL);
           } else {
-            String listFileName = "";
+            String listFileName;
             String majorType = "";
             String minorType = "";
             String languages = "";
@@ -374,16 +385,17 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
 
       // only write the cache if we loaded the def file from an actual file, not
       // some other URL
-      if(UrlUtils.isFile(gazbinURL)) {
+      if (UrlUtils.isFile(gazbinURL)) {
         File gazbinFile = Files.fileFromURL(gazbinURL);
         gazStore.save(gazbinFile);
       }
     } // gazbinFile exists ... else
   }
 
+  @SuppressWarnings("unchecked")
   protected void loadDataFromYaml(URL configFileURL) throws IOException {
     String configFileName = configFileURL.toExternalForm();
-    String gazbinFileName = configFileName.replaceAll("\\.defyaml$", ".gazbin");
+    String gazbinFileName = configFileName.replaceAll("\\.defyaml$", "_"+getCacheKey()+".gazbin");
     if (configFileName.equals(gazbinFileName)) {
       throw new GateRuntimeException("Config file must have def or defyaml extension");
     }
@@ -395,11 +407,11 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     // Always read the yaml file so we can get any special location of the cache
     // file or figure out that we should not try to load the cache file
     Yaml yaml = new Yaml();
-    BufferedReader yamlReader =
-            new BomStrippingInputStreamReader((configFileURL).openStream(), UTF8);
+    BufferedReader yamlReader
+            = new BomStrippingInputStreamReader((configFileURL).openStream(), UTF8);
     Object configObject = yaml.load(yamlReader);
 
-    List<Map> configListFiles = null;
+    List<Map<String, Object>> configListFiles = null;
     if (configObject instanceof Map) {
       Map<String, Object> configMap = (Map<String, Object>) configObject;
       String configCacheDirName = (String) configMap.get("cacheDir");
@@ -411,9 +423,9 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
         gazbinName = configCacheFileName;
       }
       gazbinURL = UrlUtils.newURL(new URL(gazbinDir), gazbinName);
-      configListFiles = (List<Map>) configMap.get("listFiles");
+      configListFiles = (List<Map<String, Object>>) configMap.get("listFiles");
     } else if (configObject instanceof List) {
-      configListFiles = (List<Map>) configObject;
+      configListFiles = (List<Map<String, Object>>) configObject;
     } else {
       throw new GateRuntimeException("Strange YAML format for the defyaml file " + configFileURL);
     }
@@ -425,18 +437,18 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     } else {
       gazStore = new GazStoreTrie3();
       // go through all the list and tsv files to load and load them
-      for (Map configListFile : configListFiles) {
-        // TODO!!!
-        //logger.debug("Reading from "+listFileName+", "+majorType+"/"+minorType+"/"+languages+"/"+annotationType);
-        //logger.info("DEBUG: loading data from "+listFileName);
-        //loadListFile(listFileName,majorType,minorType,languages,annotationType);
-      } //while
+      for (Map<String, Object> configListFile : configListFiles) {
+      } // TODO!!!
+      //logger.debug("Reading from "+listFileName+", "+majorType+"/"+minorType+"/"+languages+"/"+annotationType);
+      //logger.info("DEBUG: loading data from "+listFileName);
+      //loadListFile(listFileName,majorType,minorType,languages,annotationType);
+      //while
       gazStore.compact();
       logger.info("Gazetteer loaded from list files");
 
-      if(UrlUtils.isFile(gazbinURL)) {
-       File gazbinFile = Files.fileFromURL(gazbinURL);
-       gazStore.save(gazbinFile);
+      if (UrlUtils.isFile(gazbinURL)) {
+        File gazbinFile = Files.fileFromURL(gazbinURL);
+        gazStore.save(gazbinFile);
       }
     }
   }
@@ -456,7 +468,7 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     int infoIndex = gazStore.addListInfo(annotationType, lurl.toString(), listFeatures);
     //Lookup defaultLookup = new Lookup(listFileName, majorType, minorType, 
     //        languages, annotationType);
-    BufferedReader listReader = null;
+    BufferedReader listReader;
     if (listFileName.endsWith(".gz")) {
       listReader = new BufferedReader(new InputStreamReader(new GZIPInputStream(lurl.openStream()), UTF8));
     } else {
@@ -464,7 +476,7 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     }
     String line;
     int lines = 0;
-    String[] entryFeatures = new String[0];
+    String[] entryFeatures;
     while (null != (line = listReader.readLine())) {
       entryFeatures = new String[0];
       lines++;
@@ -517,9 +529,7 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
           } while (nextSepIndex < line.length());
           if (nrFeatures > 0) {
             entryFeatures = new String[nrFeatures * 2];
-            for (int i = 0; i < entryFeatures.length; i++) {
-              entryFeatures[i] = featureBuffer[i];
-            }
+            System.arraycopy(featureBuffer, 0, entryFeatures, 0, entryFeatures.length);
           } else {
             entryFeatures = new String[0];
           }
@@ -543,7 +553,7 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     // compare the lengths. If the lengths differ, add both in addition to
     // the original!
 
-    String textNormalized = new String(text).trim();
+    String textNormalized = text.trim();
     // convert anything that is a sequence of whitespace to a single space
     // WAS: textNormalized = textNormalized.replaceAll("  +", " ");
     textNormalized = ws_pattern.matcher(textNormalized).replaceAll(" ");
@@ -556,7 +566,6 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     // ignoring case (as now) and for matching either the original or a 
     // case-normalization (in the runtime). This would also need a setting
     // for specifying what the case normalization should be (e.g. UPPERCASE).
-
     // For now, we always normalize to upper case when case is ignored. 
     // The gazetteer should contain lowercase or firstCaseUpper words, but
     // better not ALLCAPS in order for lower case characters which get mapped
@@ -582,7 +591,6 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
       gazStore.addLookup(textNormalized, listInfoIndex, entryFeatures);
     }
 
-
   } // addLookup
 
   /**
@@ -593,7 +601,7 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
    * @return
    */
   public List<FeatureMap> lookups2FeatureMaps(Iterator<Lookup> lookups) {
-    List<FeatureMap> fms = new ArrayList<FeatureMap>();
+    List<FeatureMap> fms = new ArrayList<>();
     if (lookups == null) {
       return fms;
     }
@@ -609,11 +617,11 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
   }
 
   protected List<Action> actions;
-  
+
   @Override
   public List<Action> getActions() {
     if (actions == null) {
-      actions = new ArrayList<Action>();
+      actions = new ArrayList<>();
 
       // Action 1: remove the gazbin file and re-initialize the gazetteer
       actions.add(
@@ -633,9 +641,9 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
             cfgURL = configFileURL.toURL();
           } catch (IOException ex) {
             ex.printStackTrace(System.err);
-            System.err.println("Could not re-initialize, problem getting URL for "+configFileURL);
+            System.err.println("Could not re-initialize, problem getting URL for " + configFileURL);
           }
-          if(!UrlUtils.isFile(cfgURL)) {
+          if (!UrlUtils.isFile(cfgURL)) {
             System.err.println("Could not re-initialize, not a file URL");
           }
           File configFile = gate.util.Files.fileFromURL(cfgURL);
@@ -649,12 +657,11 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
           try {
             reInit();
           } catch (ResourceInstantiationException ex) {
-            throw new GateRuntimeException("Re-initialization failed",ex);
+            throw new GateRuntimeException("Re-initialization failed", ex);
           }
         }
       });
 
-      
     }
     return actions;
   }

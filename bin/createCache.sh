@@ -23,5 +23,16 @@ ROOTDIR=`cd "$SCRIPTDIR/.."; pwd -P`
 
 pluginDir="$ROOTDIR"
 
-java -cp "$ROOTDIR"/'lib/*':"$ROOTDIR"/StringAnnotation.jar:"${GATE_HOME}/bin/gate.jar":"${GATE_HOME}/"'lib/*' -DpluginDir="$pluginDir" -Dgate.home="$GATE_HOME" com.jpetrak.gate.stringannotation.extendedgazetteer.GenerateCache "$@"
+if [[ ! -f "$ROOTDIR/runner/stringannotation-runner.classpath" ]]
+then
+  echo Generating the classpath file "$ROOTDIR/runner/stringannotation-runner.classpath" 
+  curdir=`pwd`
+  cd "$OOTDIR"
+  mvn install -DskipTests
+  cd "$ROOTDIR/runner/" 
+  mvn install -DskipTests
+fi
+classpath=`cat "$ROOTDIR/runner/stringannotation-runner.classpath"`
+# echo classpath is $classpath
+java -cp "$classpath" com.jpetrak.gate.stringannotation.extendedgazetteer.GenerateCache "$@"
 

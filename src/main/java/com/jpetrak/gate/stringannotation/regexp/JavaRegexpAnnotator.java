@@ -51,13 +51,14 @@ import org.apache.commons.lang3.text.*;
 
 /** 
  * Annotator for annotating document text based on Java regular expressions.
- * See documentation in the wiki: 
- * https://github.com/johann-petrak/gateplugin-stringannotation/wiki/Java-Regexp-Annotator
+ * 
+ * See documentation: 
+ * https://gatenlp.github.io/gateplugin-StringAnnotation/JavaRegexpAnnotator
  * 
  * @author Johann Petrak
  */
 @CreoleResource(name = "Java Regexp Annotator",
-helpURL="https://github.com/johann-petrak/gateplugin-stringannotation/wiki/Java-Regexp-Annotator",
+helpURL="https://gatenlp.github.io/gateplugin-StringAnnotation/JavaRegexpAnnotator",
 icon="shefGazetteer.gif",
 comment = "Create annotations based on Java regular expressions")
 public class JavaRegexpAnnotator extends AbstractLanguageAnalyser

@@ -41,6 +41,8 @@ import java.net.URL;
  */
 public abstract class GazStore implements Serializable {
 
+  private static final long serialVersionUID = 6230939102737971488L;
+
   
   public abstract void addLookup(String entry, int lookupInfoIndex, String[] keyvalues);
       

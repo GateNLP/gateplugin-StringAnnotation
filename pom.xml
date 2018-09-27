@@ -40,6 +40,30 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.0.2</version>
+        <executions>
+          <execution>
+            <id>build-classpath</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>build-classpath</goal>
+            </goals>
+            <configuration>
+              <!-- <attach>true</attach> -->
+              <outputFile>stringannotation.classpath</outputFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+ 
   <parent>
     <groupId>uk.ac.gate</groupId>
     <artifactId>gate-plugin-base</artifactId>

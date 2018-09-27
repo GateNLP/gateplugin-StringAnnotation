@@ -23,10 +23,11 @@ package com.jpetrak.gate.stringannotation.extendedgazetteer;
 import gate.Factory;
 import gate.FeatureMap;
 import gate.Gate;
+import gate.creole.Plugin;
+import gate.creole.ResourceInstantiationException;
 import gate.util.GateException;
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 
 /**
@@ -43,7 +44,10 @@ public class GenerateCache {
       java.net.URL url = null;
       String deffileName = args[0];
       File deffile = new File(args[0]);
-      String cacheFileName = deffileName.replaceAll("\\.[a-z]+$",".gazbin");
+      String locale = args[2];
+      boolean caseSensitive = Boolean.parseBoolean(args[1]);
+      String cacheFileName = deffileName.replaceAll("\\.[a-z]+$",
+              "_"+GazetteerBase.makeCacheKey(caseSensitive, locale)+".gazbin");
       File cacheFile = new File(cacheFileName);
       if(cacheFile.exists()) {
         System.err.println("Cache file exists: "+cacheFileName);
@@ -63,21 +67,7 @@ public class GenerateCache {
         ex.printStackTrace(System.err);
         System.exit(1);
       }
-      String locale = args[2];
-      boolean caseSensitive = Boolean.parseBoolean(args[1]);
       
-      String pluginDir = System.getProperty("pluginDir");
-      if(pluginDir == null) {
-        System.err.println("Property 'pluginDir' not set");
-        System.exit(1);
-      }
-      String gateHome = System.getProperty("gate.home");
-      if(gateHome == null) {
-        System.err.println("Property 'gate.home' not set");
-        System.exit(1);
-      }
-      Gate.setGateHome(new File(gateHome));
-      Gate.runInSandbox(true);
       try {
         Gate.init();
       } catch (GateException ex) {
@@ -85,16 +75,8 @@ public class GenerateCache {
         ex.printStackTrace(System.err);
         System.exit(1);
       }
-      URL pluginURL = null;
       try {
-        pluginURL = new File(pluginDir).toURI().toURL();
-      } catch (MalformedURLException ex) {
-        System.err.println("Could not convert plugin directory to URL "+pluginDir);
-        ex.printStackTrace(System.err);
-        System.exit(1);
-      }
-      try {
-        Gate.getCreoleRegister().registerDirectories(pluginURL);
+        Gate.getCreoleRegister().registerPlugin(new Plugin.Maven("uk.ac.gate.plugins","stringannotation","4.1-SNAPSHOT"));
       } catch (GateException ex) {
         System.err.println("Could not register plugin") ;
         ex.printStackTrace(System.err);
@@ -111,7 +93,7 @@ public class GenerateCache {
           (gate.ProcessingResource) Factory.createResource(
                 "com.jpetrak.gate.stringannotation.extendedgazetteer.ExtendedGazetteer",
                 parms);
-      } catch (Exception ex) {
+      } catch (ResourceInstantiationException ex) {
         System.err.println("Error initializing the gazetteer PR");
         ex.printStackTrace(System.err);
         System.exit(1);
