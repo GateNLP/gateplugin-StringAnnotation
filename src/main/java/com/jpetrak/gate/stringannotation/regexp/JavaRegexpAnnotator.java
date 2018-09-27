@@ -66,13 +66,13 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
   private static final long serialVersionUID = 1L;
 
   @CreoleParameter(comment = "The URL of the regular expression annotator list")
-  public void setPatternFileURL(URL patternfileurl) {
+  public void setPatternFileURL(ResourceReference patternfileurl) {
     patternFileURL = patternfileurl;
   }
-  public URL getPatternFileURL() {
+  public ResourceReference getPatternFileURL() {
     return patternFileURL;
   }
-  protected URL patternFileURL = null;
+  protected ResourceReference patternFileURL = null;
 
   
   @CreoleParameter(comment = "The annotation set where to create the annotations",
@@ -501,7 +501,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     } // for(anndescs)
   }
   
-  List<PatternRule> loadRulesList(URL patternFile) throws UnsupportedEncodingException, IOException, ResourceInstantiationException {
+  List<PatternRule> loadRulesList(ResourceReference patternFile) throws UnsupportedEncodingException, IOException, ResourceInstantiationException {
     List<PatternRule> patternrules = new ArrayList<PatternRule>();
     BufferedReader reader = new BomStrippingInputStreamReader(patternFile.openStream(), "UTF-8");
 
