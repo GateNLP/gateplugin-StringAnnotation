@@ -60,14 +60,14 @@ public class StoreArrayOfCharArrays implements Serializable {
   CharBigArrayBigList theList = new CharBigArrayBigList();
   int curIndex = 0;
   
-  private char[] zeroChars = Utils.int2TwoChars(0); 
-  private char[] oneChars = Utils.int2TwoChars(1);
+  private final char[] zeroChars = Utils.int2TwoChars(0); 
+  private final char[] oneChars = Utils.int2TwoChars(1);
   
   //// VARIABLE LENGTH DATA METHODS
   
   /**
    * Add variable length data and get back the index under which we can get it back
-   * @param data
+   * @param data the data to add
    * @return index where the data is stored
    */
   public int addData(char[] data) {
@@ -87,16 +87,16 @@ public class StoreArrayOfCharArrays implements Serializable {
 
   /** 
    * Get variable length data from at the given index.
-   * @param index 
+   * @param index  the index for which data to get
    * @return char array of data
    */
   public char[] getData(int index) {
     // retrieve the length 
-    int l = Utils.twoChars2Int(theList.get(index), theList.get(index+1));
+    int l = Utils.twoChars2Int(theList.getChar(index), theList.getChar(index+1));
     // now retrieve the characters for this data block
     char data[] = new char[l];
     for(int i=0; i<l; i++) {
-      data[i] = theList.get(index+2+i);
+      data[i] = theList.getChar(index+2+i);
     }
     return data;
   }
@@ -111,7 +111,7 @@ public class StoreArrayOfCharArrays implements Serializable {
    * method which will have to specify the length at retrieval time. The length
    * has thus to be known at retrieval time by some means external to the store.
    * 
-   * @param data
+   * @param data fixed length data
    * @return
    */
   public int addFixedLengthData(char[] data) {
@@ -125,13 +125,14 @@ public class StoreArrayOfCharArrays implements Serializable {
   
   /** 
    * Get fixed length data of known length stored at the given index.
-   * @param index
+   * @param index index
+   * @param length length
    * @return
    */
   public char[] getFixedLengthData(int index, int length) {
     char data[] = new char[length];
     for(int i=0; i<length; i++) {
-      data[i] = theList.get(index+i);
+      data[i] = theList.getChar(index+i);
     }
     return data;
   }
@@ -141,8 +142,8 @@ public class StoreArrayOfCharArrays implements Serializable {
    * must be identical to the length of the data that was originally stored
    * at this index.
    * 
-   * @param index
-   * @param data
+   * @param index index
+   * @param data length
    * @return the same index is passed
    */
   public int replaceFixedLengthData(int index, char[] data) {
@@ -300,7 +301,7 @@ public class StoreArrayOfCharArrays implements Serializable {
     // if the list exists at all, there always must be at least one element, so
     // always check the first element.
     // Find the start and the length of the first element and compare
-    int length = Utils.twoChars2Int(theList.get(index), theList.get(index+1));
+    int length = Utils.twoChars2Int(theList.getChar(index), theList.getChar(index+1));
     int chunkIndex = index+6;  // 2 for the chunk length, 2 for list size,, 2 for next element index
     if(isChunkEqual(chunkIndex,length-4,chunk)) {
       return elementIndex;
@@ -310,7 +311,7 @@ public class StoreArrayOfCharArrays implements Serializable {
     while(nextBlockIndex != 0) {
       elementIndex++;
       // now check the block at this index!
-      length = Utils.twoChars2Int(theList.get(nextBlockIndex), theList.get(nextBlockIndex+1));
+      length = Utils.twoChars2Int(theList.getChar(nextBlockIndex), theList.getChar(nextBlockIndex+1));
       chunkIndex = nextBlockIndex+4; // 2 for chunk length, 2 for next element index
       if(isChunkEqual(chunkIndex,length-2,chunk)) {
         return elementIndex;
@@ -336,7 +337,7 @@ public class StoreArrayOfCharArrays implements Serializable {
       return false;
     }
     for(int i = 0; i<length; i++) {
-      if(theList.get(index+i) != chunk[i]) {
+      if(theList.getChar(index+i) != chunk[i]) {
         return false;
       }
     }
@@ -352,7 +353,7 @@ public class StoreArrayOfCharArrays implements Serializable {
    * @return the size of the list stored at this index 
    */
   public int getListSize(int index) {
-   return Utils.twoChars2Int(theList.get(index+2), theList.get(index+3));
+   return Utils.twoChars2Int(theList.getChar(index+2), theList.getChar(index+3));
   }
   
   //*******************************************************************
@@ -365,7 +366,7 @@ public class StoreArrayOfCharArrays implements Serializable {
    * @return 
    */
   private int getNextElementIndex4First(int index) {
-    return Utils.twoChars2Int(theList.get(index+4), theList.get(index+5));
+    return Utils.twoChars2Int(theList.getChar(index+4), theList.getChar(index+5));
   }
   /**
    * Utility method to return the next list element after any but the first element.
@@ -373,7 +374,7 @@ public class StoreArrayOfCharArrays implements Serializable {
    * @return 
    */
   private int getNextElementIndex4Other(int index) {
-    return Utils.twoChars2Int(theList.get(index+2), theList.get(index+3));
+    return Utils.twoChars2Int(theList.getChar(index+2), theList.getChar(index+3));
   }
   
   /**
@@ -393,11 +394,11 @@ public class StoreArrayOfCharArrays implements Serializable {
   // without is 2 or 4 for these.
   private char[] getDataWithout(int index, int without) {
     // retrieve the length 
-    int l = Utils.twoChars2Int(theList.get(index), theList.get(index+1));
+    int l = Utils.twoChars2Int(theList.getChar(index), theList.getChar(index+1));
     // now retrieve the characters for this data block
     char data[] = new char[l-without];
     for(int i=0; i<(l-without); i++) {
-      data[i] = theList.get(index+2+without+i);
+      data[i] = theList.getChar(index+2+without+i);
     }
     return data;
   }

@@ -52,8 +52,7 @@ import java.net.URL;
 
 public class GazStoreTrie3 extends GazStore {
   
-  // TODO: this was for debugging, chan be done away and "true" used wherever tested!
-  static final boolean useChars = true;
+  private static final long serialVersionUID = -7324853400352212338L;
   
   public GazStoreTrie3() {
     //System.out.println("DEBUG: Creating a GazStoreTrie3!!");
@@ -67,7 +66,7 @@ public class GazStoreTrie3 extends GazStore {
   
   // this is necessary during the creation of the lookup store to
   // keep trak of which key is mapped to which index
-  HashMap<String,Integer> keyIndices = new HashMap<String,Integer>();
+  HashMap<String,Integer> keyIndices = new HashMap<>();
   
   // TODO: very ultimately, we will store all nodes in an array
   // of chars too. This could be another StoreSrrayOfChars, but
@@ -76,6 +75,7 @@ public class GazStoreTrie3 extends GazStore {
   
   StoreStates statesStore = new StoreStates(dataStore);
 
+  @Override
   public IntegerState getInitialState() {
     return new IntegerState(statesStore,initialState);
   }
@@ -166,6 +166,7 @@ public class GazStoreTrie3 extends GazStore {
 } // addLookup
   
   
+  @Override
   public void compact() {
     statesStore.compact();
   }
@@ -175,7 +176,7 @@ public class GazStoreTrie3 extends GazStore {
   
   public int initialState = statesStore.initialState;
 
-  protected ArrayList<ListInfo> listInfos = new ArrayList<ListInfo>();  
+  protected ArrayList<ListInfo> listInfos = new ArrayList<>();  
   
   public String getListAnnotationType(int index) {
     return listInfos.get(index).getAnnotationType();
@@ -202,6 +203,7 @@ public class GazStoreTrie3 extends GazStore {
   }
 
   // TODO: this should really be a method of the visitor!
+  @Override
   public Iterator<Lookup> getLookups(com.jpetrak.gate.stringannotation.extendedgazetteer.State matchingState) {
     State s = (State)matchingState;
     return new OurLookupIterator(s);
@@ -256,7 +258,7 @@ public class GazStoreTrie3 extends GazStore {
   //
   protected int addLookupToStore(int storeIndex, int lookupInfoIndex, String[] keyvals) {
     char[] chunk = lookup2chunk(lookupInfoIndex, keyvals);
-    int chunknr = 0;
+    int chunknr;
     
     if(storeIndex < 0) {
       // no entry was there yet, just add
@@ -339,7 +341,7 @@ public class GazStoreTrie3 extends GazStore {
   }
   
   protected void addToFmFromChunk(FeatureMap fm, char[] chunk) {
-    int curindex = 0;
+    int curindex;
     // first get the number of entries    
     int nrEntries = Utils.twoChars2Int(chunk[0],chunk[1]);
     // int listInfo = Utils.twoChars2Int(chunk[2],chunk[3]);
@@ -485,6 +487,7 @@ public class GazStoreTrie3 extends GazStore {
     
   }
 
+  @Override
   public String statsString() { 
     return statesStore.statsString();
   }
@@ -506,10 +509,10 @@ public class GazStoreTrie3 extends GazStore {
     long start = System.currentTimeMillis();
     OutputStream output = new FileOutputStream(whereTo);
     output = new GZIPOutputStream(output);
-    ObjectOutputStream outobject = new ObjectOutputStream(output);
-    outobject.writeObject(this);
-    outobject.flush();
-    outobject.close();
+    try (ObjectOutputStream outobject = new ObjectOutputStream(output)) {
+      outobject.writeObject(this);
+      outobject.flush();
+    }
     long end = System.currentTimeMillis();
     System.out.println("Cache saved in (secs): "+((end-start)/1000.0));    
   }

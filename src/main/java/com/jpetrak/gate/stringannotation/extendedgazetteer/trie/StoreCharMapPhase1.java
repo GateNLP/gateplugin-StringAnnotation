@@ -28,12 +28,14 @@ import java.util.Arrays;
 
 public class StoreCharMapPhase1 extends StoreCharMapBase {
 
+  private static final long serialVersionUID = -6864627369844682677L;
+
   protected StoreArrayOfCharArrays store = null;
   
-  protected ArrayList<char[]>  storeKeys   = new ArrayList<char[]>();
-  protected ArrayList<int[]> storeStates = new ArrayList<int[]>();
+  protected ArrayList<char[]>  storeKeys   = new ArrayList<>();
+  protected ArrayList<int[]> storeStates = new ArrayList<>();
   
-  protected ArrayList<char[]> storeKeysAndStates = new ArrayList<char[]>();
+  protected ArrayList<char[]> storeKeysAndStates = new ArrayList<>();
   
   
   // methods necessary to access keys and states from the same array: each entry

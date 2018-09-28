@@ -149,7 +149,7 @@ public class UrlUtils {
   public static boolean exists(URL url) {
     boolean ret = true;
     try (InputStream is = url.openStream()) {
-      // do nothing, we only want to check the opening
+      // do nothing, we only want to check the opening      
     } catch (IOException ex) {
       ret = false;
     }

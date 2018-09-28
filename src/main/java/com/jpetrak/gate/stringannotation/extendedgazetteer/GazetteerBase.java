@@ -371,7 +371,6 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
               annotationType = fields[4];
             }
             if (fields.length > 5) {
-              defReader.close();
               throw new GateRuntimeException("Line has more that 5 fields in def file " + configFileURL);
             }
             logger.debug("Reading from " + listFileName + ", " + majorType + "/" + minorType + "/" + languages + "/" + annotationType);

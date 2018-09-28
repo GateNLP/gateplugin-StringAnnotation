@@ -25,6 +25,8 @@ import gate.util.GateRuntimeException;
 
 public class StoreCharMapPhase2 extends StoreCharMapBase {
 
+  private static final long serialVersionUID = 686726984501188636L;
+
   protected StoreArrayOfCharArrays store = null;
   
   // The chunkIndices array is used after the whole trie is created and when we 
