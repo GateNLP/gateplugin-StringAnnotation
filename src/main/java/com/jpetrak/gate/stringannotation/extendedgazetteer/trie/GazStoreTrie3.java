@@ -527,19 +527,17 @@ public class GazStoreTrie3 extends GazStore {
          ObjectInputStream ino = new ObjectInputStream(ing)) {
       object = ino.readObject();
     } catch (Exception ex) {
-      throw new GateRuntimeException("Could not re-load gazstore object from"+whereFrom,ex);
+      throw new GateRuntimeException("Could not re-load gazetteer cache file, please remove: "+whereFrom,ex);
     }
-    if(object == null) throw new GateRuntimeException("Still null: Could not re-load gazstore object from "+whereFrom);
+    if(object == null) throw new GateRuntimeException("Still null: Could not re-load gazstore object, try removing "+whereFrom);
     GazStoreTrie3 gs = null;
     if(object instanceof GazStoreTrie3) {
       gs = (GazStoreTrie3)object;
     } else {
-      throw new GateRuntimeException("Could not re-load gazstore object: invalid class: "+object.getClass());
+      throw new GateRuntimeException("Could not re-load gazstore object: invalid class "+object.getClass()+" try removing the cache file "+whereFrom);
     }
     long end = System.currentTimeMillis();
     System.out.println("Cache loaded in (secs): "+((end-start)/1000.0));
     return gs;
   }
-  
-  
 }

@@ -21,13 +21,11 @@
 package com.jpetrak.gate.stringannotation.extendedgazetteer.trie;
 
 import com.jpetrak.gate.stringannotation.utils.StoreArrayOfCharArrays;
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 
-import org.junit.Test;
 
 import gate.util.GateRuntimeException;
 import org.apache.log4j.Logger;
