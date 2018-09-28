@@ -337,12 +337,17 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
       throw new GateRuntimeException("Config file must have def or defyaml extension, not " + configFileURL);
     }
     URL gazbinURL = new URL(gazbinFileName);
-
+    gazStore = null;
     if (UrlUtils.exists(gazbinURL)) {
-      gazStore = new GazStoreTrie3();
-      gazStore = gazStore.load(gazbinURL);
-
-    } else {
+      // if something goes wrong loading the cache, this will show a message and return null
+      try {
+        gazStore = GazStoreTrie3.load(gazbinURL);
+      } catch (GateRuntimeException ex) {
+        ex.printStackTrace(System.err);
+        System.err.println("WARNING: loading from original files, could not load gazbin file "+gazbinURL);        
+      }
+    } 
+    if(gazStore == null) {
       gazStore = new GazStoreTrie3();
       try (BufferedReader defReader = new BomStrippingInputStreamReader((configFileURL).openStream(), UTF8)) {
         String line;
@@ -386,7 +391,16 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
       // some other URL
       if (UrlUtils.isFile(gazbinURL)) {
         File gazbinFile = Files.fileFromURL(gazbinURL);
-        gazStore.save(gazbinFile);
+        if(gazbinFile.canWrite()) {
+          try {
+            gazStore.save(gazbinFile);
+          } catch (IOException ex) {
+            ex.printStackTrace(System.err);
+            System.err.println("WARNING: error writing to "+gazbinURL+", not created or replaced!");            
+          }
+        } else {
+          System.err.println("WARNING: cannot write to "+gazbinURL+", not created or replaced!");
+        }
       }
     } // gazbinFile exists ... else
   }
@@ -429,11 +443,17 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
       throw new GateRuntimeException("Strange YAML format for the defyaml file " + configFileURL);
     }
 
+    gazStore = null;
     // if we want to load the cache and it exists, load it
-    if (UrlUtils.exists(gazbinURL)) {
-      gazStore = new GazStoreTrie3();
-      gazStore = gazStore.load(gazbinURL);
-    } else {
+    if (UrlUtils.exists(gazbinURL) ) {
+      try {
+        gazStore = GazStoreTrie3.load(gazbinURL);
+      } catch(GateRuntimeException ex) {
+        ex.printStackTrace(System.err);
+        System.err.println("WARNING: loading from original files, could not load gazbin file "+gazbinURL);
+      }
+    }
+    if (gazStore == null) {
       gazStore = new GazStoreTrie3();
       // go through all the list and tsv files to load and load them
       for (Map<String, Object> configListFile : configListFiles) {
@@ -447,7 +467,16 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
 
       if (UrlUtils.isFile(gazbinURL)) {
         File gazbinFile = Files.fileFromURL(gazbinURL);
-        gazStore.save(gazbinFile);
+        if(gazbinFile.canWrite()) {
+          try {
+            gazStore.save(gazbinFile);
+          } catch (IOException ex) {
+            ex.printStackTrace(System.err);
+            System.err.println("WARNING: error writing to "+gazbinURL+", not created or replaced!");            
+          }
+        } else {
+          System.err.println("WARNING: cannot write to "+gazbinURL+", not created or replaced!");
+        }
       }
     }
   }

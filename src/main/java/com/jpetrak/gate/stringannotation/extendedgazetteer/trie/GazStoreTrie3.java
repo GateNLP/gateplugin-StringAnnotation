@@ -517,8 +517,8 @@ public class GazStoreTrie3 extends GazStore {
     System.out.println("Cache saved in (secs): "+((end-start)/1000.0));    
   }
   
-  @Override
-  public GazStore load(URL whereFrom) throws IOException {
+  // @Override
+  public static GazStore load(URL whereFrom) throws IOException {
     System.out.println("Loading cache file from "+whereFrom);
     long start = System.currentTimeMillis();
     Object object = null;
@@ -526,7 +526,7 @@ public class GazStoreTrie3 extends GazStore {
          GZIPInputStream ing = new GZIPInputStream(ins);
          ObjectInputStream ino = new ObjectInputStream(ing)) {
       object = ino.readObject();
-    } catch (Exception ex) {
+    } catch (Exception ex) {      
       throw new GateRuntimeException("Could not re-load gazetteer cache file, please remove: "+whereFrom,ex);
     }
     if(object == null) throw new GateRuntimeException("Still null: Could not re-load gazstore object, try removing "+whereFrom);

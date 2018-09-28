@@ -401,9 +401,9 @@ public class Tests1 extends GATEPluginTests {
       assertTrue("could not save trie", false);
       return;
     }
-    GazStoreTrie3 gs2 = new GazStoreTrie3();
+    GazStoreTrie3 gs2;
     try {
-      gs2 = (GazStoreTrie3)gs2.load(someFile.toURI().toURL());
+      gs2 = (GazStoreTrie3)GazStoreTrie3.load(someFile.toURI().toURL());
     } catch (FileNotFoundException e) {
       e.printStackTrace();
       assertTrue("could not load trie",false);

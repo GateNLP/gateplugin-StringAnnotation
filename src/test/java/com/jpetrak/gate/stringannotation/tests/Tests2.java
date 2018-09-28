@@ -82,13 +82,12 @@ public class Tests2 extends GATEPluginTests {
     File save = new File("test-big.gazbin");
     eg.save(save);
     Factory.deleteResource(eg);
-    eg = null;
     System.gc();
     System.out.println("Saving completed, trying to load into a new gaz store");
     before = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
     startTime = System.currentTimeMillis();
     GazStoreTrie3 gs = new GazStoreTrie3();
-    gs = (GazStoreTrie3)gs.load(save.toURI().toURL());
+    gs = (GazStoreTrie3)GazStoreTrie3.load(save.toURI().toURL());
     endTime = System.currentTimeMillis();
     after = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
     System.out.println("Loading completed");
