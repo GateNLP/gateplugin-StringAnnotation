@@ -43,6 +43,7 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.text.*;
+import org.apache.commons.text.StringSubstitutor;
 
 // TODO:
 // = use TextChunk 
@@ -230,7 +231,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
       ? theDocument.getAnnotations()
       : theDocument.getAnnotations(outputAnnotationSet);
 
-    AnnotationSet inputAS = null; 
+    AnnotationSet inputAS; 
     if(inputAnnotationSet == null ||
        inputAnnotationSet.equals("")) inputAS = theDocument.getAnnotations();
     else inputAS = theDocument.getAnnotations(inputAnnotationSet);    
@@ -249,7 +250,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     AnnotationSet processAnns = null;
     if(getInputAnnotationType() != null && !getInputAnnotationType().isEmpty()) {
       indirect = true;
-      Set<String> typeSet = new HashSet<String>();
+      Set<String> typeSet = new HashSet<>();
       typeSet.add(getInputAnnotationType());
       typeSet.add(getSpaceAnnotationType());
       processAnns = inputAS.get(typeSet);
@@ -258,7 +259,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     // now create the chunks to annotate: if we have a containing annotation, 
     // one chunk for each containing annotation, otherwise just one chunk for
     // the whole document
-    TextChunk chunk = null;
+    TextChunk chunk;
     if(containingAnns == null) {
       if(indirect) {
         chunk = TextChunk.makeChunk(document, 0, document.getContent().size(),false,
@@ -355,7 +356,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
       // increasing rule number
       // Also, already find the longest length
       longestLength = 0;
-      List<PatternRule> candidates = new LinkedList<PatternRule>();
+      List<PatternRule> candidates = new LinkedList<>();
       for(PatternRule rule : rulesList) {
         if(rule.matcher_active && rule.matcher.start() == smallestOffset) {
           candidates.add(rule);
@@ -397,7 +398,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
           longestLength = candidates.get(candidates.size()-1).matcher_length;
         } else {
           // filter to only take the longest matches
-          List<PatternRule> longestRules = new ArrayList<PatternRule>();
+          List<PatternRule> longestRules = new ArrayList<>();
           for(PatternRule rule : candidates) {
             if(rule.matcher_length == longestLength) {
               if(matchPreference == MatchPreference.LONGEST_ALLRULES) {
@@ -503,16 +504,15 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
   }
   
   List<PatternRule> loadRulesList(ResourceReference patternFile) throws UnsupportedEncodingException, IOException, ResourceInstantiationException {
-    List<PatternRule> patternrules = new ArrayList<PatternRule>();
+    List<PatternRule> patternrules = new ArrayList<>();
     BufferedReader reader = new BomStrippingInputStreamReader(patternFile.openStream(), "UTF-8");
 
     StringBuilder patternString = new StringBuilder();    
     
     String line = reader.readLine();
     Pattern macroLine = Pattern.compile(" *([a-zA-Z0-9_]+)=(.+)");
-    Map<String,String> macros = new HashMap<String,String>();
-    StrLookup macroLookup = StrLookup.mapLookup(macros);
-    StrSubstitutor macroSubst = new StrSubstitutor(macroLookup,"<<",">>",'\\');
+    Map<String,String> macros = new HashMap<>();
+    StringSubstitutor macroSubst = new StringSubstitutor(macros,"<<",">>",'\\');
     int currentRuleNumber = 1;  // we start counting by 1
     int currentAnnDescNumber;
     PatternRule currentPatternRule = new PatternRule();
@@ -577,14 +577,14 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
             String ps = patternString.toString();
             currentPatternRule.pattern = Pattern.compile(ps,Pattern.MULTILINE);
             patternString = new StringBuilder();
-            currentPatternRule.annDescs = new ArrayList<AnnDesc>();
+            currentPatternRule.annDescs = new ArrayList<>();
           }
           AnnDesc anndesc = new AnnDesc();
           anndesc.anndescnumber = currentAnnDescNumber++;
           anndesc.typename = ruleBodyMatcher.group(2);
           String groupliststring = ruleBodyMatcher.group(1);
           // split the grouplist and create the actual list, then sort it ascending
-          List<Integer> grouplist = new ArrayList<Integer>();
+          List<Integer> grouplist = new ArrayList<>();
           String[] groupitemstrings = groupliststring.split(",");
           for (String groupitemstring : groupitemstrings) {
             grouplist.add(new Integer(groupitemstring));
@@ -607,13 +607,13 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
               String value = keyval[1];
               if (value.matches("^\\$[0-9]+$")) {
                 if (groupfeatures == null) {
-                  groupfeatures = new HashMap<String, Integer>();
+                  groupfeatures = new HashMap<>();
                 }
                 groupfeatures.put(key, new Integer(value.substring(1)));
               } else if(value.matches("^\"[^\"]*\"$")) {
                 value = value.substring(1, value.length()-1);
                 if (constantfeatures == null) {
-                  constantfeatures = new HashMap<String, String>();
+                  constantfeatures = new HashMap<>();
                 }
                 constantfeatures.put(key, value);
               } else {
