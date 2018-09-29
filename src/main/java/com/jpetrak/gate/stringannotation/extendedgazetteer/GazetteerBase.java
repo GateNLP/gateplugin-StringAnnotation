@@ -392,11 +392,15 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
       if (UrlUtils.isFile(gazbinURL)) {
         File gazbinFile = Files.fileFromURL(gazbinURL);
         if(gazbinFile.canWrite()) {
-          try {
-            gazStore.save(gazbinFile);
-          } catch (IOException ex) {
-            ex.printStackTrace(System.err);
-            System.err.println("WARNING: error writing to "+gazbinURL+", not created or replaced!");            
+          if(gazbinFile.exists()) {
+            System.err.println("Warning: re-created cache but cache file already exists, please remove: "+gazbinURL);
+          } else {
+            try {
+              gazStore.save(gazbinFile);
+            } catch (IOException ex) {
+             ex.printStackTrace(System.err);
+             System.err.println("WARNING: error writing to "+gazbinURL+", not created or replaced!");            
+            }
           }
         } else {
           System.err.println("WARNING: cannot write to "+gazbinURL+", not created or replaced!");
@@ -469,7 +473,11 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
         File gazbinFile = Files.fileFromURL(gazbinURL);
         if(gazbinFile.canWrite()) {
           try {
-            gazStore.save(gazbinFile);
+            if(gazbinFile.exists()) {
+              System.err.println("Warning: re-created cache but cache file already exists, please remove: "+gazbinURL);
+            } else {            
+              gazStore.save(gazbinFile);
+            }
           } catch (IOException ex) {
             ex.printStackTrace(System.err);
             System.err.println("WARNING: error writing to "+gazbinURL+", not created or replaced!");            
