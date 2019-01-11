@@ -223,7 +223,7 @@ public class TextChunk {
     // Instead we use char.toUpper which is not perfect but makes things easier!
     TextChunk chunk = new TextChunk();
     boolean haveFeature = !(wordAnnotationFeature == null || wordAnnotationFeature.equals(""));
-    String doctext = document.getContent().toString();
+    // String doctext = document.getContent().toString();
     chunk.initialLength = Math.max((int)(toOffset-fromOffset),500);
     chunk.from = (int)fromOffset;
     chunk.to = (int)toOffset;

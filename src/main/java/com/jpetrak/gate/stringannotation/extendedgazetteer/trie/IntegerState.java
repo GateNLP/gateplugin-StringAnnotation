@@ -29,7 +29,7 @@ package com.jpetrak.gate.stringannotation.extendedgazetteer.trie;
  * @author Johann Petrak
  *
  */
-public class IntegerState extends State {
+public class IntegerState extends Trie3State {
 
   StoreStates store = null;
   int index = -1;
@@ -45,7 +45,7 @@ public class IntegerState extends State {
   }
 
   @Override
-  public State next(char c) {
+  public Trie3State next(char c) {
     int next = store.next(index,c);
     if(next < 0) {
       return null;
@@ -55,13 +55,13 @@ public class IntegerState extends State {
   }
 
   @Override
-  public void put(char key, State value) {
+  public void put(char key, Trie3State value) {
     IntegerState st = (IntegerState)value;
     store.put(index, key, st.index);
   }
 
   @Override
-  public void replace(char key, State newState, State oldState) {
+  public void replace(char key, Trie3State newState, Trie3State oldState) {
     //
   }
   

@@ -491,7 +491,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
             if(debugMessages) {
               System.out.println("Adding annotation "+anntype+" anndesc="+anndesc+" groupnr="+groupnr);
             }
-            outputAS.add(new Long(fromOff), new Long(toOff), anntype, fm);
+            outputAS.add(Long.valueOf(fromOff), Long.valueOf(toOff), anntype, fm);
           } catch (InvalidOffsetException ex) {
             throw new GateRuntimeException(
               "Invalid offset exception for from=" + fromOff + ", fromInChunk="+from+", to=" + toOff + ", toInChunk="+to + 
@@ -631,6 +631,11 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
       }
       line = reader.readLine();
     }
+    try {
+      reader.close();
+    } catch (IOException ex) {
+      //
+    }
     if (haveRule) {
       patternrules.add(currentPatternRule);
     }
@@ -640,7 +645,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
   // a class representing a pattern rule. Each rule is associated with
   // a regular expression pattern, an annotation type name, a list of
   // group numbers, and a map of feature/value pairs.
-  protected class PatternRule {
+  protected static class PatternRule {
 
     public Pattern pattern;
     public Matcher matcher;
@@ -654,7 +659,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     }
   }
 
-  protected class AnnDesc {
+  protected static class AnnDesc {
 
     public int anndescnumber;
     public String typename;

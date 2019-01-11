@@ -27,7 +27,6 @@ import gate.util.GateRuntimeException;
 import gate.util.MethodNotImplementedException;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -205,7 +204,7 @@ public class GazStoreTrie3 extends GazStore {
   // TODO: this should really be a method of the visitor!
   @Override
   public Iterator<Lookup> getLookups(com.jpetrak.gate.stringannotation.extendedgazetteer.State matchingState) {
-    State s = (State)matchingState;
+    Trie3State s = (Trie3State)matchingState;
     return new OurLookupIterator(s);
   }
   
@@ -433,7 +432,7 @@ public class GazStoreTrie3 extends GazStore {
     
   }
   
-  protected class OurLookup extends Lookup {
+  protected static class OurLookup extends Lookup {
     OurLookup(char[] chunk) {
       this.chunk = chunk;
     }
@@ -456,7 +455,7 @@ public class GazStoreTrie3 extends GazStore {
     int curLookup;   // the index of the current lookup within the list
     int nrEntries;
     
-    public OurLookupIterator(State theState) {
+    public OurLookupIterator(Trie3State theState) {
       storeIndex = theState.getLookupIndex();
       nrEntries = dataStore.getListSize(storeIndex);
       curLookup = 0;
@@ -526,7 +525,7 @@ public class GazStoreTrie3 extends GazStore {
          GZIPInputStream ing = new GZIPInputStream(ins);
          ObjectInputStream ino = new ObjectInputStream(ing)) {
       object = ino.readObject();
-    } catch (Exception ex) {      
+    } catch (ClassNotFoundException ex) {      
       throw new GateRuntimeException("Could not re-load gazetteer cache file, please remove: "+whereFrom,ex);
     }
     if(object == null) throw new GateRuntimeException("Still null: Could not re-load gazstore object, try removing "+whereFrom);

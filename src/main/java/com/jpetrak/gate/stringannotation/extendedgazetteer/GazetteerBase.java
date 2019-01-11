@@ -181,7 +181,7 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     incrementGazStore();
     return this;
   }
-  protected static Map<String, GazStore> loadedGazStores = new HashMap<String, GazStore>();
+  protected final static Map<String, GazStore> loadedGazStores = new HashMap<String, GazStore>();
 
   public synchronized void incrementGazStore() throws ResourceInstantiationException {
     // System.err.println("DEBUG running incrementGazStore");
@@ -226,7 +226,6 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     System.gc();
     long startTime = System.currentTimeMillis();
     long before = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
-    GazStore gs = loadedGazStores.get(uniqueGazStoreKey);
     try {
       loadData();
       gazStore.compact();
@@ -674,6 +673,7 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
           } catch (IOException ex) {
             ex.printStackTrace(System.err);
             System.err.println("Could not re-initialize, problem getting URL for " + configFileURL);
+            return;
           }
           if (!UrlUtils.isFile(cfgURL)) {
             System.err.println("Could not re-initialize, not a file URL");

@@ -145,11 +145,13 @@ public class UrlUtils {
   
   /** 
    * Returns true if the URL can be opened for reading.
+   * @param url URL to check
+   * @return true if the URL can be read
    */
   public static boolean exists(URL url) {
     boolean ret = true;
     try (InputStream is = url.openStream()) {
-      // do nothing, we only want to check the opening      
+      // do nothing, we only want to check the opening
     } catch (IOException ex) {
       ret = false;
     }

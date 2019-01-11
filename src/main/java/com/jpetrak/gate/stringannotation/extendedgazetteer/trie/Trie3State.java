@@ -21,7 +21,7 @@
 package com.jpetrak.gate.stringannotation.extendedgazetteer.trie;
 
 
-public abstract class State extends com.jpetrak.gate.stringannotation.extendedgazetteer.State {
+public abstract class Trie3State extends com.jpetrak.gate.stringannotation.extendedgazetteer.State {
   public static int nrNodes = 0;
   public static int mapNodes = 0;
   public static int charNodes = 0;
@@ -31,7 +31,7 @@ public abstract class State extends com.jpetrak.gate.stringannotation.extendedga
   
   static StoreCharMapBase store = null;
   
-  public abstract void put(char key, State value);
+  public abstract void put(char key, Trie3State value);
   
 
   protected int lookupIndex = -1;
@@ -48,7 +48,7 @@ public abstract class State extends com.jpetrak.gate.stringannotation.extendedga
     return lookupIndex >= 0;
   }    
   
-  public abstract State next(char chr);
+  public abstract Trie3State next(char chr);
   
-  public abstract void replace(char key, State newState, State oldState);
+  public abstract void replace(char key, Trie3State newState, Trie3State oldState);
 }

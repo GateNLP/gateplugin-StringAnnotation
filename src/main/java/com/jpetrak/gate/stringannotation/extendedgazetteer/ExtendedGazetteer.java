@@ -568,14 +568,14 @@ public class ExtendedGazetteer extends GazetteerBase {
     if (outputAS instanceof AnnotationSetImpl) {
       AnnotationSetImpl setasannimpl = (AnnotationSetImpl) outputAS;
       try {
-        id = setasannimpl.add(new Long(from), new Long(to + 1), type, fm);
+        id = setasannimpl.add(Long.valueOf(from), new Long(to + 1), type, fm);
       } catch (InvalidOffsetException ex) {
         throw new GateRuntimeException("Invalid offset exception - doclen/from/to="
                 + document.getContent().size() + "/" + from + "/" + to, ex);
       }
     } else {
       try {
-        outputAS.add(new Long(from), new Long(to + 1), type, fm);
+        outputAS.add(Long.valueOf(from), new Long(to + 1), type, fm);
       } catch (InvalidOffsetException ex) {
         throw new GateRuntimeException("Invalid offset exception - doclen/from/to="
                 + document.getContent().size() + "/" + from + "/" + to + " / ", ex);

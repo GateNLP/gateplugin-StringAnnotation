@@ -316,7 +316,7 @@ public class FeatureGazetteer extends GazetteerBase
       gazStore.addLookupListFeatures(fm, lookup);
       gazStore.addLookupEntryFeatures(fm, lookup);
       try {
-        outputAS.add(new Long(from), new Long(to), type, fm);
+        outputAS.add(Long.valueOf(from), Long.valueOf(to), type, fm);
       } catch (InvalidOffsetException ex) {
         throw new GateRuntimeException("Invalid offset exception - doclen/from/to="
           + document.getContent().size() + "/" + from + "/" + to + " / ", ex);
