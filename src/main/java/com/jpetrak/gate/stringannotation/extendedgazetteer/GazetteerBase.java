@@ -391,19 +391,15 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
       // some other URL
       if (UrlUtils.isFile(gazbinURL)) {
         File gazbinFile = Files.fileFromURL(gazbinURL);
-        if(gazbinFile.canWrite()) {
-          if(gazbinFile.exists()) {
-            System.err.println("Warning: re-created cache but cache file already exists, please remove: "+gazbinURL);
-          } else {
-            try {
-              gazStore.save(gazbinFile);
-            } catch (IOException ex) {
-             ex.printStackTrace(System.err);
-             System.err.println("WARNING: error writing to "+gazbinURL+", not created or replaced!");            
-            }
-          }
+        if (gazbinFile.exists()) {
+          System.err.println("Warning: re-created cache but cache file already exists, please remove: " + gazbinURL);
         } else {
-          System.err.println("WARNING: cannot write to "+gazbinURL+", not created or replaced!");
+          try {
+            gazStore.save(gazbinFile);
+          } catch (IOException ex) {
+            ex.printStackTrace(System.err);
+            System.err.println("WARNING: error writing to " + gazbinURL + ", maybe not created or replaced or damaged!");
+          }
         }
       }
     } // gazbinFile exists ... else
