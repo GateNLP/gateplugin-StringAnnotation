@@ -505,136 +505,137 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
   
   List<PatternRule> loadRulesList(ResourceReference patternFile) throws UnsupportedEncodingException, IOException, ResourceInstantiationException {
     List<PatternRule> patternrules = new ArrayList<>();
-    BufferedReader reader = new BomStrippingInputStreamReader(patternFile.openStream(), "UTF-8");
-
-    StringBuilder patternString = new StringBuilder();    
     
-    String line = reader.readLine();
-    Pattern macroLine = Pattern.compile(" *([a-zA-Z0-9_]+)=(.+)");
-    Map<String,String> macros = new HashMap<>();
-    StringSubstitutor macroSubst = new StringSubstitutor(macros,"<<",">>",'\\');
-    int currentRuleNumber = 1;  // we start counting by 1
-    int currentAnnDescNumber;
-    PatternRule currentPatternRule = new PatternRule();
-    currentPatternRule.rulenumber = currentRuleNumber++;
-    currentAnnDescNumber = 1;
     boolean haveRule = false;
-    int linenr = 0;
-    while (line != null) {
-      linenr++;
-      line = line.trim();
-      if (line.length() == 0) {
-        line = reader.readLine();
-        continue;
-      }
-      if (line.startsWith("//")) {
-        line = reader.readLine();
-        continue;
-      }
-      Matcher matchMacro = macroLine.matcher(line);
-      if (line.startsWith("|")) {
-        if (haveRule) {
-          patternrules.add(currentPatternRule);
-          currentPatternRule = new PatternRule();
-          currentPatternRule.rulenumber = currentRuleNumber++;
-          currentAnnDescNumber = 1;
-          haveRule = false;
-        }
-        line = line.substring(1);
-        // replace any macro variables in the line with the values we
-        // already have defined.
-        line = macroSubst.replace(line);
-        //System.out.println("JavaRegexpAnnotator: PATTERN:"+line);
+    PatternRule currentPatternRule = new PatternRule();
 
-        // collect the regexp lines in the current regexp
-        if (patternString.length() > 0) {
-          patternString.append("|");
+    try ( BufferedReader reader = new BomStrippingInputStreamReader(patternFile.openStream(), "UTF-8") ) {
+
+      StringBuilder patternString = new StringBuilder();
+
+      String line = reader.readLine();
+      Pattern macroLine = Pattern.compile(" *([a-zA-Z0-9_]+)=(.+)");
+      Map<String, String> macros = new HashMap<>();
+      StringSubstitutor macroSubst = new StringSubstitutor(macros, "<<", ">>", '\\');
+      int currentRuleNumber = 1;  // we start counting by 1
+      int currentAnnDescNumber;
+      currentPatternRule.rulenumber = currentRuleNumber++;
+      currentAnnDescNumber = 1;
+      int linenr = 0;
+      while (line != null) {
+        linenr++;
+        line = line.trim();
+        if (line.length() == 0) {
+          line = reader.readLine();
+          continue;
         }
-        patternString.append("(?:");
-        patternString.append(line);
-        patternString.append(")");
-      } else if (matchMacro.matches()) {
-        String macroVar = matchMacro.group(1);
-        String macroPat = matchMacro.group(2);
-        // first replace any variables that may occur in the pattern of this macro
-        macroPat = macroSubst.replace(macroPat);
-        //System.out.println("JavaRegexpAnnotator: MACRO:"+macroVar+"="+macroPat);
-        macros.put(macroVar, macroPat);
-      } else {
-        // this must be a rule body line of the form
-        // groupnumber => Typename [key/value list]
-        // Each such line adds an AnnDesc to the current PatternRule
-        //System.out.println("JavaRegexpAnnotator: BODY:"+line);
-        Matcher ruleBodyMatcher = ruleStartPattern.matcher(line);
-        if (ruleBodyMatcher.matches()) {
-          // at this point the patternString must be non-empty!
-          if (!haveRule) {
-            // the first time we get a rule body
-            haveRule = true;
-            if (patternString.length() == 0) {
-              throw new GateRuntimeException("Rule body must be preceded by patterns");
-            }
-            String ps = patternString.toString();
-            currentPatternRule.pattern = Pattern.compile(ps,Pattern.MULTILINE);
-            patternString = new StringBuilder();
-            currentPatternRule.annDescs = new ArrayList<>();
+        if (line.startsWith("//")) {
+          line = reader.readLine();
+          continue;
+        }
+        Matcher matchMacro = macroLine.matcher(line);
+        if (line.startsWith("|")) {
+          if (haveRule) {
+            patternrules.add(currentPatternRule);
+            currentPatternRule = new PatternRule();
+            currentPatternRule.rulenumber = currentRuleNumber++;
+            currentAnnDescNumber = 1;
+            haveRule = false;
           }
-          AnnDesc anndesc = new AnnDesc();
-          anndesc.anndescnumber = currentAnnDescNumber++;
-          anndesc.typename = ruleBodyMatcher.group(2);
-          String groupliststring = ruleBodyMatcher.group(1);
-          // split the grouplist and create the actual list, then sort it ascending
-          List<Integer> grouplist = new ArrayList<>();
-          String[] groupitemstrings = groupliststring.split(",");
-          for (String groupitemstring : groupitemstrings) {
-            grouplist.add(new Integer(groupitemstring));
+          line = line.substring(1);
+          // replace any macro variables in the line with the values we
+          // already have defined.
+          line = macroSubst.replace(line);
+          //System.out.println("JavaRegexpAnnotator: PATTERN:"+line);
+
+          // collect the regexp lines in the current regexp
+          if (patternString.length() > 0) {
+            patternString.append("|");
           }
-          anndesc.groupnumbers = grouplist;
-          // process the optional feature list
-          String featurelist = ruleBodyMatcher.group(3);
-          if (featurelist == null) {
-            // no features, just assign null
-            anndesc.constantfeatures = null;
-            anndesc.groupfeatures = null;
-          } else {
-            featurelist = featurelist.trim();
-            Map<String, Integer> groupfeatures = null;
-            Map<String, String> constantfeatures = null;
-            String[] featureitems = featurelist.split(",");
-            for (String featureitem : featureitems) {
-              String[] keyval = featureitem.split("=");
-              String key = keyval[0];
-              String value = keyval[1];
-              if (value.matches("^\\$[0-9]+$")) {
-                if (groupfeatures == null) {
-                  groupfeatures = new HashMap<>();
-                }
-                groupfeatures.put(key, new Integer(value.substring(1)));
-              } else if(value.matches("^\"[^\"]*\"$")) {
-                value = value.substring(1, value.length()-1);
-                if (constantfeatures == null) {
-                  constantfeatures = new HashMap<>();
-                }
-                constantfeatures.put(key, value);
-              } else {
-                throw new GateRuntimeException("Feature value must be $n or a quoted string not "+key+" in line "+linenr);
-              }
-            }
-            anndesc.constantfeatures = constantfeatures;
-            anndesc.groupfeatures = groupfeatures;
-          }
-          // add this AnnDesc to the pattern rule
-          currentPatternRule.annDescs.add(anndesc);
+          patternString.append("(?:");
+          patternString.append(line);
+          patternString.append(")");
+        } else if (matchMacro.matches()) {
+          String macroVar = matchMacro.group(1);
+          String macroPat = matchMacro.group(2);
+          // first replace any variables that may occur in the pattern of this macro
+          macroPat = macroSubst.replace(macroPat);
+          //System.out.println("JavaRegexpAnnotator: MACRO:"+macroVar+"="+macroPat);
+          macros.put(macroVar, macroPat);
         } else {
-          throw new GateRuntimeException("Strange rule body line nr "+linenr+": "+line);
+          // this must be a rule body line of the form
+          // groupnumber => Typename [key/value list]
+          // Each such line adds an AnnDesc to the current PatternRule
+          //System.out.println("JavaRegexpAnnotator: BODY:"+line);
+          Matcher ruleBodyMatcher = ruleStartPattern.matcher(line);
+          if (ruleBodyMatcher.matches()) {
+            // at this point the patternString must be non-empty!
+            if (!haveRule) {
+              // the first time we get a rule body
+              haveRule = true;
+              if (patternString.length() == 0) {
+                throw new GateRuntimeException("Rule body must be preceded by patterns");
+              }
+              String ps = patternString.toString();
+              currentPatternRule.pattern = Pattern.compile(ps, Pattern.MULTILINE);
+              patternString = new StringBuilder();
+              currentPatternRule.annDescs = new ArrayList<>();
+            }
+            AnnDesc anndesc = new AnnDesc();
+            anndesc.anndescnumber = currentAnnDescNumber++;
+            anndesc.typename = ruleBodyMatcher.group(2);
+            String groupliststring = ruleBodyMatcher.group(1);
+            // split the grouplist and create the actual list, then sort it ascending
+            List<Integer> grouplist = new ArrayList<>();
+            String[] groupitemstrings = groupliststring.split(",");
+            for (String groupitemstring : groupitemstrings) {
+              grouplist.add(new Integer(groupitemstring));
+            }
+            anndesc.groupnumbers = grouplist;
+            // process the optional feature list
+            String featurelist = ruleBodyMatcher.group(3);
+            if (featurelist == null) {
+              // no features, just assign null
+              anndesc.constantfeatures = null;
+              anndesc.groupfeatures = null;
+            } else {
+              featurelist = featurelist.trim();
+              Map<String, Integer> groupfeatures = null;
+              Map<String, String> constantfeatures = null;
+              String[] featureitems = featurelist.split(",");
+              for (String featureitem : featureitems) {
+                String[] keyval = featureitem.split("=");
+                String key = keyval[0];
+                String value = keyval[1];
+                if (value.matches("^\\$[0-9]+$")) {
+                  if (groupfeatures == null) {
+                    groupfeatures = new HashMap<>();
+                  }
+                  groupfeatures.put(key, new Integer(value.substring(1)));
+                } else if (value.matches("^\"[^\"]*\"$")) {
+                  value = value.substring(1, value.length() - 1);
+                  if (constantfeatures == null) {
+                    constantfeatures = new HashMap<>();
+                  }
+                  constantfeatures.put(key, value);
+                } else {
+                  throw new GateRuntimeException("Feature value must be $n or a quoted string not " + key + " in line " + linenr);
+                }
+              }
+              anndesc.constantfeatures = constantfeatures;
+              anndesc.groupfeatures = groupfeatures;
+            }
+            // add this AnnDesc to the pattern rule
+            currentPatternRule.annDescs.add(anndesc);
+          } else {
+            throw new GateRuntimeException("Strange rule body line nr " + linenr + ": " + line);
+          }
         }
+        line = reader.readLine();
       }
-      line = reader.readLine();
-    }
-    try {
-      reader.close();
+
     } catch (IOException ex) {
-      //
+      throw new GateRuntimeException("Problem while reading rules", ex);
     }
     if (haveRule) {
       patternrules.add(currentPatternRule);
