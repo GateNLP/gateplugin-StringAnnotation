@@ -88,7 +88,7 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
   @CreoleParameter(comment = "Should this gazetteer differentiate on case",
           defaultValue = "true")
   public void setCaseSensitive(Boolean yesno) {
-    System.err.println("DEBUG: setting case sensitive to " + yesno);
+    // System.err.println("DEBUG: setting case sensitive to " + yesno);
     caseSensitive = yesno;
   }
 
@@ -100,7 +100,7 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
   @CreoleParameter(comment = "For case insensitive matches, the locale to use for normalizing case",
           defaultValue = "en")
   public void setCaseConversionLanguage(String val) {
-    System.err.println("DEBUG: case conversion language set to " + val);
+    // System.err.println("DEBUG: case conversion language set to " + val);
     caseConversionLanguage = val;
     caseConversionLocale = new Locale(val);
   }
@@ -177,14 +177,14 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     // precompile the pattern used to replace all unicode whitespace in gazetteer
     // entries with a single space.
     ws_pattern = Pattern.compile(WS_PATTERNSTRING);
-    System.err.println("DEBUG: running init(), caseConversionLanguage is " + caseConversionLanguage);
+    // System.err.println("DEBUG: running init(), caseConversionLanguage is " + caseConversionLanguage);
     incrementGazStore();
     return this;
   }
   protected static Map<String, GazStore> loadedGazStores = new HashMap<String, GazStore>();
 
   public synchronized void incrementGazStore() throws ResourceInstantiationException {
-    System.err.println("DEBUG running incrementGazStore");
+    // System.err.println("DEBUG running incrementGazStore");
     String uniqueGazStoreKey = genUniqueGazStoreKey();
     logger.info("Creating gazetteer for " + getConfigFileURL());
     System.gc();
@@ -208,7 +208,7 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
 
       gazStore.refcount++;
       loadedGazStores.put(uniqueGazStoreKey, gazStore);
-      System.err.println("DEBUG addeed new gaz store with key " + uniqueGazStoreKey);
+      // System.err.println("DEBUG addeed new gaz store with key " + uniqueGazStoreKey);
       logger.info("New GazStore loaded for " + uniqueGazStoreKey);
     }
     long endTime = System.currentTimeMillis();
@@ -246,36 +246,36 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
   }
 
   public synchronized void decrementGazStore() {
-    System.err.println("DEBUG:  running decrementGazStore, map contains: " + loadedGazStores.keySet());
+    // System.err.println("DEBUG:  running decrementGazStore, map contains: " + loadedGazStores.keySet());
     String key = genUniqueGazStoreKey();
-    System.err.println("DEBUG: key for finding the gaz store: " + key);
+    // System.err.println("DEBUG: key for finding the gaz store: " + key);
     GazStore gs = loadedGazStores.get(key);
-    System.err.println("DEBUG got a gaz store: " + gs);
+    // System.err.println("DEBUG got a gaz store: " + gs);
     gs.refcount--;
     if (gs.refcount == 0) {
-      System.err.println("DEBUG: removing gaz store key");
+      // System.err.println("DEBUG: removing gaz store key");
       loadedGazStores.remove(key);
       logger.info("Removing GazStore for " + key);
     }
   }
 
   public synchronized void removeGazStore() {
-    System.err.println("DEBUG: running removeGazStore()");
+    // System.err.println("DEBUG: running removeGazStore()");
     String key = genUniqueGazStoreKey();
-    System.err.println("DEBUG: removing gazstore key: " + key);
+    // System.err.println("DEBUG: removing gazstore key: " + key);
     loadedGazStores.remove(key);
     logger.info("reInit(): force-removing GazStore for " + key);
   }
 
   protected String genUniqueGazStoreKey() {
     String key = " cs=" + caseSensitive + " url=" + configFileURL + " lang=" + caseConversionLanguage;
-    System.err.println("DEBUG: generating the gaz store key: " + key);
+    // System.err.println("DEBUG: generating the gaz store key: " + key);
     return key;
   }
 
   @Override
   public void cleanup() {
-    System.err.println("DEBUG: running cleanup()");
+    // System.err.println("DEBUG: running cleanup()");
     decrementGazStore();
   }
 
@@ -289,7 +289,7 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
   public void reInit() throws ResourceInstantiationException {
     //removeGazStore();
     //init();
-    System.err.println("DEBUG: running reInit()");
+    // System.err.println("DEBUG: running reInit()");
     replaceGazStore();
   }
 
