@@ -148,11 +148,11 @@ public class UrlUtils {
    * @param url URL to check
    * @return true if the URL can be read
    */
+  @SuppressWarnings({"try"})
   public static boolean exists(URL url) {
     boolean ret = true;
     
     try (
-            @SuppressWarnings("unused")
             InputStream is = url.openStream()
             ) {
       // do nothing, we only want to check the opening
