@@ -181,7 +181,7 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     incrementGazStore();
     return this;
   }
-  protected final static Map<String, GazStore> loadedGazStores = new HashMap<String, GazStore>();
+  final static Map<String, GazStore> loadedGazStores = new HashMap<String, GazStore>();
 
   public synchronized void incrementGazStore() throws ResourceInstantiationException {
     // System.err.println("DEBUG running incrementGazStore");
