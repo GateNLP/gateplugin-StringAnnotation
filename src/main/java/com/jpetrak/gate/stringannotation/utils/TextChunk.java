@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010- Austrian Research Institute for Artificial Intelligence (OFAI). 
- * Copyright (C) 2014-2016 The University of Sheffield.
+ * Copyright (C) 2014-2019 The University of Sheffield.
  *
  * This file is part of gateplugin-StringAnnotation
  * (see https://github.com/johann-petrak/gateplugin-StringAnnotation)

@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2010- Austrian Research Institute for Artificial Intelligence (OFAI).
- * Copyright (C) 2014-2016 The University of Sheffield.
+ * Copyright (C) 2014-2019 The University of Sheffield.
  *
  * This file is part of gateplugin-ModularPipelines
- * (see https://github.com/johann-petrak/gateplugin-ModularPipelines)
+ * (see https://github.com/johann-petrak/gateplugin-StringAnnotation)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,17 +18,10 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this software. If not, see <http://www.gnu.org/licenses/>.
  */
-/*
- *  JavaRegexpAnnotator.java
- *
- *  $Id: JavaRegexpAnnotator.java  $
- *
- */
 package com.jpetrak.gate.stringannotation.regexp;
 
 import com.jpetrak.gate.stringannotation.utils.TextChunk;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
@@ -40,10 +33,8 @@ import gate.creole.metadata.Optional;
 import gate.creole.metadata.RunTime;
 import gate.util.*;
 import java.io.BufferedReader;
-import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.lang3.text.*;
 import org.apache.commons.text.StringSubstitutor;
 
 // TODO:
@@ -54,14 +45,14 @@ import org.apache.commons.text.StringSubstitutor;
 /**
  * Annotator for annotating document text based on Java regular expressions.
  *
- * See documentation: 
+ * See documentation:
  * https://gatenlp.github.io/gateplugin-StringAnnotation/JavaRegexpAnnotator
  *
  * @author Johann Petrak
  */
 @CreoleResource(name = "Java Regexp Annotator",
-        helpURL="https://gatenlp.github.io/gateplugin-StringAnnotation/JavaRegexpAnnotator",
-        icon="shefGazetteer.gif",
+        helpURL = "https://gatenlp.github.io/gateplugin-StringAnnotation/JavaRegexpAnnotator",
+        icon = "shefGazetteer.gif",
         comment = "Create annotations based on Java regular expressions")
 public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
         implements ProcessingResource {
@@ -72,11 +63,11 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
   public void setPatternFileURL(ResourceReference patternfileurl) {
     patternFileURL = patternfileurl;
   }
+
   public ResourceReference getPatternFileURL() {
     return patternFileURL;
   }
   protected ResourceReference patternFileURL = null;
-
 
   @CreoleParameter(comment = "The annotation set where to create the annotations",
           defaultValue = "")
@@ -85,6 +76,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
   public void setOutputAnnotationSet(String name) {
     outputAnnotationSet = name;
   }
+
   public String getOutputAnnotationSet() {
     return outputAnnotationSet;
   }
@@ -98,6 +90,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
   public void setContainingAnnotationType(String val) {
     this.containingAnnotationType = val;
   }
+
   public String getContainingAnnotationType() {
     return containingAnnotationType;
   }
@@ -111,12 +104,11 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
   public void setInputAnnotationSet(String ias) {
     this.inputAnnotationSet = ias;
   }
+
   public String getInputAnnotationSet() {
     return inputAnnotationSet;
   }
   private String inputAnnotationSet = "";
-
-
 
   @RunTime
   @Optional
@@ -126,6 +118,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
   public void setInputAnnotationType(String val) {
     this.inputAnnotationType = val;
   }
+
   public String getInputAnnotationType() {
     return inputAnnotationType;
   }
@@ -139,6 +132,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
   public void setSpaceAnnotationType(String val) {
     this.spaceAnnotationType = val;
   }
+
   public String getSpaceAnnotationType() {
     return spaceAnnotationType;
   }
@@ -152,20 +146,18 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
   public void setTextFeature(String val) {
     this.textFeature = val;
   }
+
   public String getTextFeature() {
     return textFeature;
   }
   private String textFeature = "";
-
-
-
-
 
   @CreoleParameter(comment = "Should overlapping matches be allowed?", defaultValue = "false")
   @RunTime
   public void setOverlappingMatches(Boolean flag) {
     overlappingMatches = flag;
   }
+
   public Boolean getOverlappingMatches() {
     return overlappingMatches;
   }
@@ -176,6 +168,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
   public void setMatchPreference(MatchPreference pref) {
     matchPreference = pref;
   }
+
   public MatchPreference getMatchPreference() {
     return matchPreference;
   }
@@ -187,6 +180,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
   public void setDebugging(Boolean flag) {
     debugging = flag;
   }
+
   public Boolean getDebugging() {
     return debugging;
   }
@@ -195,8 +189,8 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
   protected Boolean debugMessages = false;
 
   List<PatternRule> rulesList;
-  Pattern ruleStartPattern =
-          Pattern.compile(
+  Pattern ruleStartPattern
+          = Pattern.compile(
                   "^\\s*([0-9]+(?:,[0-9]+)*)\\s*=>\\s*(\\w+)(\\s+\\w+=(?:\"[^\"]*\"|\\$[0-9]+)(?:,\\w+=(?:\"[^\"]*\"|\\$[0-9]+))*)?");
 
   @Override
@@ -233,12 +227,15 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
             : theDocument.getAnnotations(outputAnnotationSet);
 
     AnnotationSet inputAS;
-    if(inputAnnotationSet == null ||
-            inputAnnotationSet.equals("")) inputAS = theDocument.getAnnotations();
-    else inputAS = theDocument.getAnnotations(inputAnnotationSet);
+    if (inputAnnotationSet == null
+            || inputAnnotationSet.equals("")) {
+      inputAS = theDocument.getAnnotations();
+    } else {
+      inputAS = theDocument.getAnnotations(inputAnnotationSet);
+    }
 
     AnnotationSet containingAnns = null;
-    if(containingAnnotationType == null || containingAnnotationType.isEmpty()) {
+    if (containingAnnotationType == null || containingAnnotationType.isEmpty()) {
       // leave the containingAnns null to indicate we do not use containing annotations
     } else {
       containingAnns = inputAS.get(containingAnnotationType);
@@ -249,7 +246,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     // annotation
     boolean indirect = false;
     AnnotationSet processAnns = null;
-    if(getInputAnnotationType() != null && !getInputAnnotationType().isEmpty()) {
+    if (getInputAnnotationType() != null && !getInputAnnotationType().isEmpty()) {
       indirect = true;
       Set<String> typeSet = new HashSet<>();
       typeSet.add(getInputAnnotationType());
@@ -261,9 +258,9 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     // one chunk for each containing annotation, otherwise just one chunk for
     // the whole document
     TextChunk chunk;
-    if(containingAnns == null) {
-      if(indirect) {
-        chunk = TextChunk.makeChunk(document, 0, document.getContent().size(),false,
+    if (containingAnns == null) {
+      if (indirect) {
+        chunk = TextChunk.makeChunk(document, 0, document.getContent().size(), false,
                 processAnns, getInputAnnotationType(), getTextFeature(), getSpaceAnnotationType(),
                 false, false);
         //System.out.println("Created chunk notContaining/indirect: "+chunk);
@@ -271,19 +268,19 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
         chunk = TextChunk.makeChunk(document, 0, document.getContent().size());
         //System.out.println("Created chunk notContaining/direct: "+chunk);
       }
-      annotateChunk(chunk,outputAS);
+      annotateChunk(chunk, outputAS);
     } else {
-      for(Annotation containing : containingAnns) {
-        if(indirect) {
+      for (Annotation containing : containingAnns) {
+        if (indirect) {
           chunk = TextChunk.makeChunk(document, containing, false,
                   processAnns, getInputAnnotationType(), getTextFeature(), getSpaceAnnotationType(),
                   false, false);
           //System.out.println("Created chunk containing/indirect: "+chunk);
         } else {
-          chunk = TextChunk.makeChunk(document,Utils.start(containing),Utils.end(containing));
+          chunk = TextChunk.makeChunk(document, Utils.start(containing), Utils.end(containing));
           //System.out.println("Created chunk containing/direct: "+chunk);
         }
-        annotateChunk(chunk,outputAS);
+        annotateChunk(chunk, outputAS);
       }
     }
   }
@@ -295,16 +292,16 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
 
     // Initialize all the matchers with the document string and find the first 
     // match, if any
-    for(PatternRule rule : rulesList) {
+    for (PatternRule rule : rulesList) {
       rule.matcher = rule.pattern.matcher(docText);
       rule.matcher_active = rule.matcher.find();
-      if(rule.matcher_active) {
-        rule.matcher_length = rule.matcher.end()-rule.matcher.start();
+      if (rule.matcher_active) {
+        rule.matcher_length = rule.matcher.end() - rule.matcher.start();
       }
       haveActive = haveActive || rule.matcher_active;
     }
     // if we did not find anything at all, give up already
-    if(!haveActive) {
+    if (!haveActive) {
       return;
     }
 
@@ -313,22 +310,22 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     int longestLength;
     // as long as there is still more document content to match and active
     // matchers, proceed
-    while(curOffset < docText.length()) {
+    while (curOffset < docText.length()) {
       // for all matchers where the last match was before the current offset,
       // re-find the next match starting from the current offset
       // Matchers where the next match is only later, are left as they are
-      if(debugMessages) {
-        System.out.println("(Re)trying at offset "+curOffset);
+      if (debugMessages) {
+        System.out.println("(Re)trying at offset " + curOffset);
       }
       haveActive = false;
-      smallestOffset = docText.length()+1;
-      for(PatternRule rule : rulesList) {
-        if(rule.matcher_active) {
-          if(rule.matcher.start() < curOffset) {
+      smallestOffset = docText.length() + 1;
+      for (PatternRule rule : rulesList) {
+        if (rule.matcher_active) {
+          if (rule.matcher.start() < curOffset) {
             rule.matcher_active = rule.matcher.find(curOffset);
-            if(rule.matcher_active) {
-              rule.matcher_length = rule.matcher.end()-rule.matcher.start();
-              if(rule.matcher.start() < smallestOffset) {
+            if (rule.matcher_active) {
+              rule.matcher_length = rule.matcher.end() - rule.matcher.start();
+              if (rule.matcher.start() < smallestOffset) {
                 smallestOffset = rule.matcher.start();
               }
               haveActive = true;
@@ -336,104 +333,103 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
               rule.matcher_length = 0;
             }
           } else {
-            if(rule.matcher.start() < smallestOffset) {
+            if (rule.matcher.start() < smallestOffset) {
               smallestOffset = rule.matcher.start();
             }
             haveActive = true;
           }
         }
       }
-      if(!haveActive) {
-        if(debugMessages) {
+      if (!haveActive) {
+        if (debugMessages) {
           System.out.println("No more matches, exiting loop");
         }
         break;
       }
       curOffset = smallestOffset;
-      if(debugMessages) {
-        System.out.println("Found next match(es) and setting curOffset to "+curOffset);
+      if (debugMessages) {
+        System.out.println("Found next match(es) and setting curOffset to " + curOffset);
       }
       // find all the rules that match at the smallest offset, ordered by
       // increasing rule number
       // Also, already find the longest length
       longestLength = 0;
       List<PatternRule> candidates = new LinkedList<>();
-      for(PatternRule rule : rulesList) {
-        if(rule.matcher_active && rule.matcher.start() == smallestOffset) {
+      for (PatternRule rule : rulesList) {
+        if (rule.matcher_active && rule.matcher.start() == smallestOffset) {
           candidates.add(rule);
-          if(rule.matcher_length > longestLength) {
+          if (rule.matcher_length > longestLength) {
             longestLength = rule.matcher_length;
           }
         }
       }
 
-      if(debugMessages) {
-        System.out.println("Found the following matches at this offset: "+candidates);
+      if (debugMessages) {
+        System.out.println("Found the following matches at this offset: " + candidates);
       }
 
-      if(matchPreference == MatchPreference.ALL) {
-        for(PatternRule rule : candidates) {
-          if(debugMessages) {
-            System.out.println("Annotating for ALL: "+rule);
+      if (matchPreference == MatchPreference.ALL) {
+        for (PatternRule rule : candidates) {
+          if (debugMessages) {
+            System.out.println("Annotating for ALL: " + rule);
           }
-          annotateMatch(rule, outputAS,chunk);
+          annotateMatch(rule, outputAS, chunk);
         }
       } else {
-        if(candidates.size() == 1) {
-          if(debugMessages) {
-            System.out.println("Annotating size 1 "+candidates.get(0));
+        if (candidates.size() == 1) {
+          if (debugMessages) {
+            System.out.println("Annotating size 1 " + candidates.get(0));
           }
-          annotateMatch(candidates.get(0), outputAS,chunk);
+          annotateMatch(candidates.get(0), outputAS, chunk);
           longestLength = candidates.get(0).matcher_length;
-        } else if(matchPreference == MatchPreference.FIRSTRULE) {
-          if(debugMessages) {
-            System.out.println("Annotating FIRSTRULE "+candidates.get(0));
+        } else if (matchPreference == MatchPreference.FIRSTRULE) {
+          if (debugMessages) {
+            System.out.println("Annotating FIRSTRULE " + candidates.get(0));
           }
-          annotateMatch(candidates.get(0),outputAS,chunk);
+          annotateMatch(candidates.get(0), outputAS, chunk);
           longestLength = candidates.get(0).matcher_length;
-        } else if(matchPreference == MatchPreference.LASTRULE) {
-          if(debugMessages) {
-            System.out.println("Annotating LASTRULE "+candidates.get(candidates.size()-1));
+        } else if (matchPreference == MatchPreference.LASTRULE) {
+          if (debugMessages) {
+            System.out.println("Annotating LASTRULE " + candidates.get(candidates.size() - 1));
           }
-          annotateMatch(candidates.get(candidates.size()-1),outputAS,chunk);
-          longestLength = candidates.get(candidates.size()-1).matcher_length;
+          annotateMatch(candidates.get(candidates.size() - 1), outputAS, chunk);
+          longestLength = candidates.get(candidates.size() - 1).matcher_length;
         } else {
           // filter to only take the longest matches
           List<PatternRule> longestRules = new ArrayList<>();
-          for(PatternRule rule : candidates) {
-            if(rule.matcher_length == longestLength) {
-              if(matchPreference == MatchPreference.LONGEST_ALLRULES) {
-                if(debugMessages) {
-                  System.out.println("Annotating LONGEST_ALLRULES "+rule);
+          for (PatternRule rule : candidates) {
+            if (rule.matcher_length == longestLength) {
+              if (matchPreference == MatchPreference.LONGEST_ALLRULES) {
+                if (debugMessages) {
+                  System.out.println("Annotating LONGEST_ALLRULES " + rule);
                 }
-                annotateMatch(rule, outputAS,chunk);
+                annotateMatch(rule, outputAS, chunk);
               } else {
                 longestRules.add(rule);
               }
             }
           }
-          if(matchPreference == MatchPreference.LONGEST_FIRSTRULE) {
-            if(debugMessages) {
-              System.out.println("Annotating LONGEST_FIRSTRULE "+longestRules.get(0));
+          if (matchPreference == MatchPreference.LONGEST_FIRSTRULE) {
+            if (debugMessages) {
+              System.out.println("Annotating LONGEST_FIRSTRULE " + longestRules.get(0));
             }
-            annotateMatch(longestRules.get(0), outputAS,chunk);
-          } else if(matchPreference == MatchPreference.LONGEST_LASTRULE) {
-            if(debugMessages) {
-              System.out.println("Annotating LONGEST_LASTRULE "+longestRules.get(longestRules.size()-1));
+            annotateMatch(longestRules.get(0), outputAS, chunk);
+          } else if (matchPreference == MatchPreference.LONGEST_LASTRULE) {
+            if (debugMessages) {
+              System.out.println("Annotating LONGEST_LASTRULE " + longestRules.get(longestRules.size() - 1));
             }
-            annotateMatch(longestRules.get(longestRules.size()-1),outputAS,chunk);
+            annotateMatch(longestRules.get(longestRules.size() - 1), outputAS, chunk);
           }
         }
       }
       // advance the curOffset to either the next offset or 
       // to the offset after the longest match we have annotated.
-      if(overlappingMatches) {
+      if (overlappingMatches) {
         curOffset += 1;
       } else {
         curOffset += longestLength;
       }
     }
-
 
     fireProcessFinished();
   }
@@ -450,7 +446,6 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
       List<Integer> groupnrs = anndesc.groupnumbers;
 
       //System.out.println("Found a match: " + matcher.group());
-
       for (int groupnr : groupnrs) {
         //System.out.println("Processing for group nr "+groupnr);
         // get the offsets
@@ -458,7 +453,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
         try {
           match = matcher.group(groupnr);
         } catch (RuntimeException ex) {
-          throw new GateRuntimeException("Error matching group "+groupnr+" in rule "+rule,ex);
+          throw new GateRuntimeException("Error matching group " + groupnr + " in rule " + rule, ex);
         }
         if (match != null) {
           int from = matcher.start(groupnr);
@@ -477,26 +472,26 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
               }
             }
           }
-          if(getDebugging()) {
+          if (getDebugging()) {
             // in debugging mode, we add the rule number and groupd number
             // that matched to each annotation
-            fm.put("sra_debug_rule",rule.rulenumber);
-            fm.put("sra_debug_anndesc",anndesc.anndescnumber);
-            fm.put("sra_debug_group",groupnr);
+            fm.put("sra_debug_rule", rule.rulenumber);
+            fm.put("sra_debug_anndesc", anndesc.anndescnumber);
+            fm.put("sra_debug_group", groupnr);
           }
           int fromOff = chunk.getStartOffset(from);
           // TODO: why is this (.-1)+1 necessary here but things work with the 
           // indirect extended gazetteer?
-          int toOff = chunk.getEndOffset(to-1)+1;
+          int toOff = chunk.getEndOffset(to - 1) + 1;
           try {
-            if(debugMessages) {
-              System.out.println("Adding annotation "+anntype+" anndesc="+anndesc+" groupnr="+groupnr);
+            if (debugMessages) {
+              System.out.println("Adding annotation " + anntype + " anndesc=" + anndesc + " groupnr=" + groupnr);
             }
             outputAS.add(Long.valueOf(fromOff), Long.valueOf(toOff), anntype, fm);
           } catch (InvalidOffsetException ex) {
             throw new GateRuntimeException(
-                    "Invalid offset exception for from=" + fromOff + ", fromInChunk="+from+", to=" + toOff + ", toInChunk="+to +
-                            ",doclen="+document.getContent().size(),ex);
+                    "Invalid offset exception for from=" + fromOff + ", fromInChunk=" + from + ", to=" + toOff + ", toInChunk=" + to
+                    + ",doclen=" + document.getContent().size(), ex);
           }
         }
       }
@@ -504,18 +499,15 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     } // for(anndescs)
   }
 
-
   protected List<PatternRule> loadRulesList(ResourceReference patternFile) throws UnsupportedEncodingException, IOException, ResourceInstantiationException {
-    List<PatternRule> patternrules = new ArrayList<>();
-
     try (BufferedReader reader = new BomStrippingInputStreamReader(patternFile.openStream(), "UTF-8")) {
+      List<PatternRule> patternrules = new ArrayList<>();
       patternrules = loadRulesList(reader);
+      return patternrules;
     } catch (IOException ex) {
       throw new GateRuntimeException("Problem while reading rules", ex);
     }
-    return patternrules;
   }
-
 
   protected List<PatternRule> loadRulesList(BufferedReader reader) throws IOException {
     List<PatternRule> patternrules = new ArrayList<>();
@@ -600,7 +592,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
           List<Integer> grouplist = new ArrayList<>();
           String[] groupitemstrings = groupliststring.split(",");
           for (String groupitemstring : groupitemstrings) {
-            grouplist.add(new Integer(groupitemstring));
+            grouplist.add(Integer.valueOf(groupitemstring));
           }
           anndesc.groupnumbers = grouplist;
           // process the optional feature list
@@ -662,9 +654,10 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     public int matcher_length;      // state: the length of the current match
     public int rulenumber;
     public List<AnnDesc> annDescs;
+
     @Override
     public String toString() {
-      return "R"+rulenumber+"="+pattern.toString();
+      return "R" + rulenumber + "=" + pattern.toString();
     }
   }
 
