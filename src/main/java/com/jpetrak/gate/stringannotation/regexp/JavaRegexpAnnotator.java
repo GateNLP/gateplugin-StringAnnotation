@@ -501,8 +501,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
 
   protected List<PatternRule> loadRulesList(ResourceReference patternFile) throws UnsupportedEncodingException, IOException, ResourceInstantiationException {
     try (BufferedReader reader = new BomStrippingInputStreamReader(patternFile.openStream(), "UTF-8")) {
-      List<PatternRule> patternrules = new ArrayList<>();
-      patternrules = loadRulesList(reader);
+      List<PatternRule> patternrules = loadRulesList(reader);
       return patternrules;
     } catch (IOException ex) {
       throw new GateRuntimeException("Problem while reading rules", ex);
@@ -614,7 +613,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
                 if (groupfeatures == null) {
                   groupfeatures = new HashMap<>();
                 }
-                groupfeatures.put(key, new Integer(value.substring(1)));
+                groupfeatures.put(key, Integer.valueOf(value.substring(1)));
               } else if (value.matches("^\"[^\"]*\"$")) {
                 value = value.substring(1, value.length() - 1);
                 if (constantfeatures == null) {
