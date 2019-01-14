@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010- Austrian Research Institute for Artificial Intelligence (OFAI). 
+ * Copyright (c) 2010- Austrian Research Institute for Artificial Intelligence (OFAI).
  * Copyright (C) 2014-2016 The University of Sheffield.
  *
  * This file is part of gateplugin-ModularPipelines
@@ -28,6 +28,7 @@ package com.jpetrak.gate.stringannotation.regexp;
 
 import com.jpetrak.gate.stringannotation.utils.TextChunk;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
@@ -50,20 +51,20 @@ import org.apache.commons.text.StringSubstitutor;
 // = runtime parameter containingAnnotationType
 // = and wordAnnotationType/textFeature for indirect annotation
 
-/** 
+/**
  * Annotator for annotating document text based on Java regular expressions.
- * 
+ *
  * See documentation: 
  * https://gatenlp.github.io/gateplugin-StringAnnotation/JavaRegexpAnnotator
- * 
+ *
  * @author Johann Petrak
  */
 @CreoleResource(name = "Java Regexp Annotator",
-helpURL="https://gatenlp.github.io/gateplugin-StringAnnotation/JavaRegexpAnnotator",
-icon="shefGazetteer.gif",
-comment = "Create annotations based on Java regular expressions")
+        helpURL="https://gatenlp.github.io/gateplugin-StringAnnotation/JavaRegexpAnnotator",
+        icon="shefGazetteer.gif",
+        comment = "Create annotations based on Java regular expressions")
 public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
-  implements ProcessingResource {
+        implements ProcessingResource {
 
   private static final long serialVersionUID = 1L;
 
@@ -76,9 +77,9 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
   }
   protected ResourceReference patternFileURL = null;
 
-  
+
   @CreoleParameter(comment = "The annotation set where to create the annotations",
-     defaultValue = "")
+          defaultValue = "")
   // @Optional
   @RunTime
   public void setOutputAnnotationSet(String name) {
@@ -86,14 +87,14 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
   }
   public String getOutputAnnotationSet() {
     return outputAnnotationSet;
-  } 
+  }
   protected String outputAnnotationSet = "";
- 
+
   @RunTime
   @Optional
   @CreoleParameter(
-    comment = "The containing annotation set type",
-  defaultValue = "")
+          comment = "The containing annotation set type",
+          defaultValue = "")
   public void setContainingAnnotationType(String val) {
     this.containingAnnotationType = val;
   }
@@ -101,12 +102,12 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     return containingAnnotationType;
   }
   private String containingAnnotationType = "";
-  
+
   @RunTime
   @Optional
   @CreoleParameter(
-    comment = "The input annotation set, for the containing and the input annotation types",
-  defaultValue = "")
+          comment = "The input annotation set, for the containing and the input annotation types",
+          defaultValue = "")
   public void setInputAnnotationSet(String ias) {
     this.inputAnnotationSet = ias;
   }
@@ -114,14 +115,14 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     return inputAnnotationSet;
   }
   private String inputAnnotationSet = "";
-  
-  
-  
+
+
+
   @RunTime
   @Optional
   @CreoleParameter(
-    comment = "The input annotation type, if indirect annotation is wanted, if empty: no indirect annotation",
-  defaultValue = "")
+          comment = "The input annotation type, if indirect annotation is wanted, if empty: no indirect annotation",
+          defaultValue = "")
   public void setInputAnnotationType(String val) {
     this.inputAnnotationType = val;
   }
@@ -129,12 +130,12 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     return inputAnnotationType;
   }
   private String inputAnnotationType = "";
-  
+
   @RunTime
   @Optional
   @CreoleParameter(
-    comment = "The space annotation set type, if indirect annotation is wanted, otherwise ignored",
-  defaultValue = "SpaceToken")
+          comment = "The space annotation set type, if indirect annotation is wanted, otherwise ignored",
+          defaultValue = "SpaceToken")
   public void setSpaceAnnotationType(String val) {
     this.spaceAnnotationType = val;
   }
@@ -142,12 +143,12 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     return spaceAnnotationType;
   }
   private String spaceAnnotationType = "";
-  
+
   @RunTime
   @Optional
   @CreoleParameter(
-    comment = "The feature from the input annotation to use as text for indirect annotation - if empty, use the document text",
-  defaultValue = "")
+          comment = "The feature from the input annotation to use as text for indirect annotation - if empty, use the document text",
+          defaultValue = "")
   public void setTextFeature(String val) {
     this.textFeature = val;
   }
@@ -155,11 +156,11 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     return textFeature;
   }
   private String textFeature = "";
-  
-  
 
-  
-  
+
+
+
+
   @CreoleParameter(comment = "Should overlapping matches be allowed?", defaultValue = "false")
   @RunTime
   public void setOverlappingMatches(Boolean flag) {
@@ -179,9 +180,9 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     return matchPreference;
   }
   MatchPreference matchPreference = MatchPreference.LONGEST_LASTRULE;
-  
+
   @CreoleParameter(comment = "Debugging mode: if true, add debuggin features to created annotations",
-    defaultValue = "false")
+          defaultValue = "false")
   @RunTime
   public void setDebugging(Boolean flag) {
     debugging = flag;
@@ -190,13 +191,13 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     return debugging;
   }
   protected Boolean debugging = false;
-  
+
   protected Boolean debugMessages = false;
-  
+
   List<PatternRule> rulesList;
-  Pattern ruleStartPattern = 
-    Pattern.compile(
-    "^\\s*([0-9]+(?:,[0-9]+)*)\\s*=>\\s*(\\w+)(\\s+\\w+=(?:\"[^\"]*\"|\\$[0-9]+)(?:,\\w+=(?:\"[^\"]*\"|\\$[0-9]+))*)?");
+  Pattern ruleStartPattern =
+          Pattern.compile(
+                  "^\\s*([0-9]+(?:,[0-9]+)*)\\s*=>\\s*(\\w+)(\\s+\\w+=(?:\"[^\"]*\"|\\$[0-9]+)(?:,\\w+=(?:\"[^\"]*\"|\\$[0-9]+))*)?");
 
   @Override
   public Resource init() throws ResourceInstantiationException {
@@ -216,26 +217,26 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     return this;
   }
 
-  @Override 
+  @Override
   public void execute() throws ExecutionException {
     doExecute(document);
   }
-  
+
   public void doExecute(Document theDocument) throws ExecutionException {
     interrupted = false;
     int lastProgress = 0;
     fireProgressChanged(lastProgress);
     //get pointers to the annotation sets
     AnnotationSet outputAS = (outputAnnotationSet == null
-      || outputAnnotationSet.trim().length() == 0)
-      ? theDocument.getAnnotations()
-      : theDocument.getAnnotations(outputAnnotationSet);
+            || outputAnnotationSet.trim().length() == 0)
+            ? theDocument.getAnnotations()
+            : theDocument.getAnnotations(outputAnnotationSet);
 
-    AnnotationSet inputAS; 
+    AnnotationSet inputAS;
     if(inputAnnotationSet == null ||
-       inputAnnotationSet.equals("")) inputAS = theDocument.getAnnotations();
-    else inputAS = theDocument.getAnnotations(inputAnnotationSet);    
-    
+            inputAnnotationSet.equals("")) inputAS = theDocument.getAnnotations();
+    else inputAS = theDocument.getAnnotations(inputAnnotationSet);
+
     AnnotationSet containingAnns = null;
     if(containingAnnotationType == null || containingAnnotationType.isEmpty()) {
       // leave the containingAnns null to indicate we do not use containing annotations
@@ -243,7 +244,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
       containingAnns = inputAS.get(containingAnnotationType);
       //System.out.println("DEBUG: got containing annots: "+containingAnns.size()+" type is "+containingAnnotationType);
     }
-    
+
     // check if an input annotation type is specified. If yes, we want indirect
     // annotation
     boolean indirect = false;
@@ -255,7 +256,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
       typeSet.add(getSpaceAnnotationType());
       processAnns = inputAS.get(typeSet);
     }
-    
+
     // now create the chunks to annotate: if we have a containing annotation, 
     // one chunk for each containing annotation, otherwise just one chunk for
     // the whole document
@@ -263,7 +264,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     if(containingAnns == null) {
       if(indirect) {
         chunk = TextChunk.makeChunk(document, 0, document.getContent().size(),false,
-                processAnns, getInputAnnotationType(), getTextFeature(), getSpaceAnnotationType(), 
+                processAnns, getInputAnnotationType(), getTextFeature(), getSpaceAnnotationType(),
                 false, false);
         //System.out.println("Created chunk notContaining/indirect: "+chunk);
       } else {
@@ -275,8 +276,8 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
       for(Annotation containing : containingAnns) {
         if(indirect) {
           chunk = TextChunk.makeChunk(document, containing, false,
-                  processAnns, getInputAnnotationType(), getTextFeature(), getSpaceAnnotationType(), 
-                  false, false);          
+                  processAnns, getInputAnnotationType(), getTextFeature(), getSpaceAnnotationType(),
+                  false, false);
           //System.out.println("Created chunk containing/indirect: "+chunk);
         } else {
           chunk = TextChunk.makeChunk(document,Utils.start(containing),Utils.end(containing));
@@ -286,12 +287,12 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
       }
     }
   }
-   
+
   protected void annotateChunk(TextChunk chunk, AnnotationSet outputAS) {
     String docText = chunk.getTextString();
 
     boolean haveActive = false;
-    
+
     // Initialize all the matchers with the document string and find the first 
     // match, if any
     for(PatternRule rule : rulesList) {
@@ -306,13 +307,13 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     if(!haveActive) {
       return;
     }
-    
+
     int curOffset = 0;
     int smallestOffset;
     int longestLength;
     // as long as there is still more document content to match and active
     // matchers, proceed
-    while(curOffset < docText.length()) {      
+    while(curOffset < docText.length()) {
       // for all matchers where the last match was before the current offset,
       // re-find the next match starting from the current offset
       // Matchers where the next match is only later, are left as they are
@@ -338,7 +339,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
             if(rule.matcher.start() < smallestOffset) {
               smallestOffset = rule.matcher.start();
             }
-            haveActive = true;            
+            haveActive = true;
           }
         }
       }
@@ -365,11 +366,11 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
           }
         }
       }
-      
+
       if(debugMessages) {
         System.out.println("Found the following matches at this offset: "+candidates);
       }
-      
+
       if(matchPreference == MatchPreference.ALL) {
         for(PatternRule rule : candidates) {
           if(debugMessages) {
@@ -389,7 +390,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
             System.out.println("Annotating FIRSTRULE "+candidates.get(0));
           }
           annotateMatch(candidates.get(0),outputAS,chunk);
-          longestLength = candidates.get(0).matcher_length; 
+          longestLength = candidates.get(0).matcher_length;
         } else if(matchPreference == MatchPreference.LASTRULE) {
           if(debugMessages) {
             System.out.println("Annotating LASTRULE "+candidates.get(candidates.size()-1));
@@ -423,7 +424,7 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
             annotateMatch(longestRules.get(longestRules.size()-1),outputAS,chunk);
           }
         }
-      }      
+      }
       // advance the curOffset to either the next offset or 
       // to the offset after the longest match we have annotated.
       if(overlappingMatches) {
@@ -432,8 +433,8 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
         curOffset += longestLength;
       }
     }
-    
-      
+
+
     fireProcessFinished();
   }
 
@@ -494,153 +495,160 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
             outputAS.add(Long.valueOf(fromOff), Long.valueOf(toOff), anntype, fm);
           } catch (InvalidOffsetException ex) {
             throw new GateRuntimeException(
-              "Invalid offset exception for from=" + fromOff + ", fromInChunk="+from+", to=" + toOff + ", toInChunk="+to + 
-              ",doclen="+document.getContent().size(),ex);
+                    "Invalid offset exception for from=" + fromOff + ", fromInChunk="+from+", to=" + toOff + ", toInChunk="+to +
+                            ",doclen="+document.getContent().size(),ex);
           }
         }
       }
 
     } // for(anndescs)
   }
-  
-  List<PatternRule> loadRulesList(ResourceReference patternFile) throws UnsupportedEncodingException, IOException, ResourceInstantiationException {
+
+
+  protected List<PatternRule> loadRulesList(ResourceReference patternFile) throws UnsupportedEncodingException, IOException, ResourceInstantiationException {
     List<PatternRule> patternrules = new ArrayList<>();
-    
+
+    try (BufferedReader reader = new BomStrippingInputStreamReader(patternFile.openStream(), "UTF-8")) {
+      patternrules = loadRulesList(reader);
+    } catch (IOException ex) {
+      throw new GateRuntimeException("Problem while reading rules", ex);
+    }
+    return patternrules;
+  }
+
+
+  protected List<PatternRule> loadRulesList(BufferedReader reader) throws IOException {
+    List<PatternRule> patternrules = new ArrayList<>();
     boolean haveRule = false;
     PatternRule currentPatternRule = new PatternRule();
 
-    try ( BufferedReader reader = new BomStrippingInputStreamReader(patternFile.openStream(), "UTF-8") ) {
+    StringBuilder patternString = new StringBuilder();
 
-      StringBuilder patternString = new StringBuilder();
-
-      String line = reader.readLine();
-      Pattern macroLine = Pattern.compile(" *([a-zA-Z0-9_]+)=(.+)");
-      Map<String, String> macros = new HashMap<>();
-      StringSubstitutor macroSubst = new StringSubstitutor(macros, "<<", ">>", '\\');
-      int currentRuleNumber = 1;  // we start counting by 1
-      int currentAnnDescNumber;
-      currentPatternRule.rulenumber = currentRuleNumber++;
-      currentAnnDescNumber = 1;
-      int linenr = 0;
-      while (line != null) {
-        linenr++;
-        line = line.trim();
-        if (line.length() == 0) {
-          line = reader.readLine();
-          continue;
-        }
-        if (line.startsWith("//")) {
-          line = reader.readLine();
-          continue;
-        }
-        Matcher matchMacro = macroLine.matcher(line);
-        if (line.startsWith("|")) {
-          if (haveRule) {
-            patternrules.add(currentPatternRule);
-            currentPatternRule = new PatternRule();
-            currentPatternRule.rulenumber = currentRuleNumber++;
-            currentAnnDescNumber = 1;
-            haveRule = false;
-          }
-          line = line.substring(1);
-          // replace any macro variables in the line with the values we
-          // already have defined.
-          line = macroSubst.replace(line);
-          //System.out.println("JavaRegexpAnnotator: PATTERN:"+line);
-
-          // collect the regexp lines in the current regexp
-          if (patternString.length() > 0) {
-            patternString.append("|");
-          }
-          patternString.append("(?:");
-          patternString.append(line);
-          patternString.append(")");
-        } else if (matchMacro.matches()) {
-          String macroVar = matchMacro.group(1);
-          String macroPat = matchMacro.group(2);
-          // first replace any variables that may occur in the pattern of this macro
-          macroPat = macroSubst.replace(macroPat);
-          //System.out.println("JavaRegexpAnnotator: MACRO:"+macroVar+"="+macroPat);
-          macros.put(macroVar, macroPat);
-        } else {
-          // this must be a rule body line of the form
-          // groupnumber => Typename [key/value list]
-          // Each such line adds an AnnDesc to the current PatternRule
-          //System.out.println("JavaRegexpAnnotator: BODY:"+line);
-          Matcher ruleBodyMatcher = ruleStartPattern.matcher(line);
-          if (ruleBodyMatcher.matches()) {
-            // at this point the patternString must be non-empty!
-            if (!haveRule) {
-              // the first time we get a rule body
-              haveRule = true;
-              if (patternString.length() == 0) {
-                throw new GateRuntimeException("Rule body must be preceded by patterns");
-              }
-              String ps = patternString.toString();
-              currentPatternRule.pattern = Pattern.compile(ps, Pattern.MULTILINE);
-              patternString = new StringBuilder();
-              currentPatternRule.annDescs = new ArrayList<>();
-            }
-            AnnDesc anndesc = new AnnDesc();
-            anndesc.anndescnumber = currentAnnDescNumber++;
-            anndesc.typename = ruleBodyMatcher.group(2);
-            String groupliststring = ruleBodyMatcher.group(1);
-            // split the grouplist and create the actual list, then sort it ascending
-            List<Integer> grouplist = new ArrayList<>();
-            String[] groupitemstrings = groupliststring.split(",");
-            for (String groupitemstring : groupitemstrings) {
-              grouplist.add(new Integer(groupitemstring));
-            }
-            anndesc.groupnumbers = grouplist;
-            // process the optional feature list
-            String featurelist = ruleBodyMatcher.group(3);
-            if (featurelist == null) {
-              // no features, just assign null
-              anndesc.constantfeatures = null;
-              anndesc.groupfeatures = null;
-            } else {
-              featurelist = featurelist.trim();
-              Map<String, Integer> groupfeatures = null;
-              Map<String, String> constantfeatures = null;
-              String[] featureitems = featurelist.split(",");
-              for (String featureitem : featureitems) {
-                String[] keyval = featureitem.split("=");
-                String key = keyval[0];
-                String value = keyval[1];
-                if (value.matches("^\\$[0-9]+$")) {
-                  if (groupfeatures == null) {
-                    groupfeatures = new HashMap<>();
-                  }
-                  groupfeatures.put(key, new Integer(value.substring(1)));
-                } else if (value.matches("^\"[^\"]*\"$")) {
-                  value = value.substring(1, value.length() - 1);
-                  if (constantfeatures == null) {
-                    constantfeatures = new HashMap<>();
-                  }
-                  constantfeatures.put(key, value);
-                } else {
-                  throw new GateRuntimeException("Feature value must be $n or a quoted string not " + key + " in line " + linenr);
-                }
-              }
-              anndesc.constantfeatures = constantfeatures;
-              anndesc.groupfeatures = groupfeatures;
-            }
-            // add this AnnDesc to the pattern rule
-            currentPatternRule.annDescs.add(anndesc);
-          } else {
-            throw new GateRuntimeException("Strange rule body line nr " + linenr + ": " + line);
-          }
-        }
+    String line = reader.readLine();
+    Pattern macroLine = Pattern.compile(" *([a-zA-Z0-9_]+)=(.+)");
+    Map<String, String> macros = new HashMap<>();
+    StringSubstitutor macroSubst = new StringSubstitutor(macros, "<<", ">>", '\\');
+    int currentRuleNumber = 1;  // we start counting by 1
+    int currentAnnDescNumber;
+    currentPatternRule.rulenumber = currentRuleNumber++;
+    currentAnnDescNumber = 1;
+    int linenr = 0;
+    while (line != null) {
+      linenr++;
+      line = line.trim();
+      if (line.length() == 0) {
         line = reader.readLine();
+        continue;
       }
+      if (line.startsWith("//")) {
+        line = reader.readLine();
+        continue;
+      }
+      Matcher matchMacro = macroLine.matcher(line);
+      if (line.startsWith("|")) {
+        if (haveRule) {
+          patternrules.add(currentPatternRule);
+          currentPatternRule = new PatternRule();
+          currentPatternRule.rulenumber = currentRuleNumber++;
+          currentAnnDescNumber = 1;
+          haveRule = false;
+        }
+        line = line.substring(1);
+        // replace any macro variables in the line with the values we
+        // already have defined.
+        line = macroSubst.replace(line);
+        //System.out.println("JavaRegexpAnnotator: PATTERN:"+line);
 
-    } catch (IOException ex) {
-      throw new GateRuntimeException("Problem while reading rules", ex);
+        // collect the regexp lines in the current regexp
+        if (patternString.length() > 0) {
+          patternString.append("|");
+        }
+        patternString.append("(?:");
+        patternString.append(line);
+        patternString.append(")");
+      } else if (matchMacro.matches()) {
+        String macroVar = matchMacro.group(1);
+        String macroPat = matchMacro.group(2);
+        // first replace any variables that may occur in the pattern of this macro
+        macroPat = macroSubst.replace(macroPat);
+        //System.out.println("JavaRegexpAnnotator: MACRO:"+macroVar+"="+macroPat);
+        macros.put(macroVar, macroPat);
+      } else {
+        // this must be a rule body line of the form
+        // groupnumber => Typename [key/value list]
+        // Each such line adds an AnnDesc to the current PatternRule
+        //System.out.println("JavaRegexpAnnotator: BODY:"+line);
+        Matcher ruleBodyMatcher = ruleStartPattern.matcher(line);
+        if (ruleBodyMatcher.matches()) {
+          // at this point the patternString must be non-empty!
+          if (!haveRule) {
+            // the first time we get a rule body
+            haveRule = true;
+            if (patternString.length() == 0) {
+              throw new GateRuntimeException("Rule body must be preceded by patterns");
+            }
+            String ps = patternString.toString();
+            currentPatternRule.pattern = Pattern.compile(ps, Pattern.MULTILINE);
+            patternString = new StringBuilder();
+            currentPatternRule.annDescs = new ArrayList<>();
+          }
+          AnnDesc anndesc = new AnnDesc();
+          anndesc.anndescnumber = currentAnnDescNumber++;
+          anndesc.typename = ruleBodyMatcher.group(2);
+          String groupliststring = ruleBodyMatcher.group(1);
+          // split the grouplist and create the actual list, then sort it ascending
+          List<Integer> grouplist = new ArrayList<>();
+          String[] groupitemstrings = groupliststring.split(",");
+          for (String groupitemstring : groupitemstrings) {
+            grouplist.add(new Integer(groupitemstring));
+          }
+          anndesc.groupnumbers = grouplist;
+          // process the optional feature list
+          String featurelist = ruleBodyMatcher.group(3);
+          if (featurelist == null) {
+            // no features, just assign null
+            anndesc.constantfeatures = null;
+            anndesc.groupfeatures = null;
+          } else {
+            featurelist = featurelist.trim();
+            Map<String, Integer> groupfeatures = null;
+            Map<String, String> constantfeatures = null;
+            String[] featureitems = featurelist.split(",");
+            for (String featureitem : featureitems) {
+              String[] keyval = featureitem.split("=");
+              String key = keyval[0];
+              String value = keyval[1];
+              if (value.matches("^\\$[0-9]+$")) {
+                if (groupfeatures == null) {
+                  groupfeatures = new HashMap<>();
+                }
+                groupfeatures.put(key, new Integer(value.substring(1)));
+              } else if (value.matches("^\"[^\"]*\"$")) {
+                value = value.substring(1, value.length() - 1);
+                if (constantfeatures == null) {
+                  constantfeatures = new HashMap<>();
+                }
+                constantfeatures.put(key, value);
+              } else {
+                throw new GateRuntimeException("Feature value must be $n or a quoted string not " + key + " in line " + linenr);
+              }
+            }
+            anndesc.constantfeatures = constantfeatures;
+            anndesc.groupfeatures = groupfeatures;
+          }
+          // add this AnnDesc to the pattern rule
+          currentPatternRule.annDescs.add(anndesc);
+        } else {
+          throw new GateRuntimeException("Strange rule body line nr " + linenr + ": " + line);
+        }
+      }
+      line = reader.readLine();
     }
     if (haveRule) {
       patternrules.add(currentPatternRule);
     }
     return patternrules;
+
   }
 
   // a class representing a pattern rule. Each rule is associated with
@@ -668,6 +676,6 @@ public class JavaRegexpAnnotator extends AbstractLanguageAnalyser
     public Map<String, String> constantfeatures;
     public Map<String, Integer> groupfeatures;
   }
-  
+
 } // class SimpleRegexpAnnotator
 
