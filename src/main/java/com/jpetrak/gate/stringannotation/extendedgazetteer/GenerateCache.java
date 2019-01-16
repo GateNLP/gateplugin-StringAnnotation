@@ -76,7 +76,7 @@ public class GenerateCache {
         System.exit(1);
       }
       try {
-        Gate.getCreoleRegister().registerPlugin(new Plugin.Maven("uk.ac.gate.plugins","stringannotation","4.1-SNAPSHOT"));
+        Gate.getCreoleRegister().registerPlugin(new Plugin.Maven("uk.ac.gate.plugins","stringannotation","4.2-SNAPSHOT"));
       } catch (GateException ex) {
         System.err.println("Could not register plugin") ;
         ex.printStackTrace(System.err);
