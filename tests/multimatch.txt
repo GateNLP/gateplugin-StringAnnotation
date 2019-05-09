@@ -1,0 +1,5 @@
+From the first list: fromlist1 (2 entries), alsolist1 (1), anotherlist1 (1)
+From the second list: fromlist2 (2 entries), alsolist2 (1), anotherlist2 (1)
+From the third: fromlist3 (2 entries), alsolist3 (1), anotherlist3 (1)
+From the first and second: fromlist12 (2 entries)
+From all three lists: fromlist123 (1)
