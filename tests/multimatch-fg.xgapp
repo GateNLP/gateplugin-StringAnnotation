@@ -96,13 +96,28 @@
         </gate.util.persistence.AnalyserRunningStrategyPersistence>
         <gate.util.persistence.AnalyserRunningStrategyPersistence>
           <runMode>1</runMode>
+          <featureName></featureName>
+          <featureValue></featureValue>
           <pr class="gate.util.persistence.LanguageAnalyserPersistence">
             <runtimeParams class="gate.util.persistence.MapPersistence">
               <mapType>gate.util.SimpleFeatureMapImpl</mapType>
-              <localMap/>
+              <localMap>
+                <entry>
+                  <string>outputAnnotationSet</string>
+                  <string>AddNewAnnotation</string>
+                </entry>
+                <entry>
+                  <string>processingMode</string>
+                  <com.jpetrak.gate.stringannotation.extendedgazetteer.FeatureGazetteerProcessingMode>AddNewAnnotation</com.jpetrak.gate.stringannotation.extendedgazetteer.FeatureGazetteerProcessingMode>
+                </entry>
+                <entry>
+                  <string>textFeature</string>
+                  <string>string</string>
+                </entry>
+              </localMap>
             </runtimeParams>
-            <resourceType>com.jpetrak.gate.stringannotation.extendedgazetteer.ExtendedGazetteer</resourceType>
-            <resourceName>Extended Gazetteer 0000E</resourceName>
+            <resourceType>com.jpetrak.gate.stringannotation.extendedgazetteer.FeatureGazetteer</resourceType>
+            <resourceName>Feature Gazetteer 0000A</resourceName>
             <initParams class="gate.util.persistence.MapPersistence">
               <mapType>gate.util.SimpleFeatureMapImpl</mapType>
               <localMap>
@@ -136,7 +151,7 @@
       <collectionType>java.util.ArrayList</collectionType>
     </prList>
     <resourceType>gate.creole.ConditionalSerialAnalyserController</resourceType>
-    <resourceName>multimatch.xgapp</resourceName>
+    <resourceName>multimatch-fg</resourceName>
     <initParams class="gate.util.persistence.MapPersistence">
       <mapType>gate.util.SimpleFeatureMapImpl</mapType>
       <localMap/>
