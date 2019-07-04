@@ -680,7 +680,7 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
           }
           File configFile = gate.util.Files.fileFromURL(cfgURL);
           String configFileName = configFile.getAbsolutePath();
-          String gazbinFileName = configFileName.replaceAll("(?:\\.def$|\\.defyaml)", ".gazbin");
+          String gazbinFileName = configFileName.replaceAll("(?:\\.def$|\\.defyaml)", "_"+getCacheKey()+".gazbin");
           if (configFileName.equals(gazbinFileName)) {
             throw new GateRuntimeException("Config file must have def or defyaml extension!");
           }
