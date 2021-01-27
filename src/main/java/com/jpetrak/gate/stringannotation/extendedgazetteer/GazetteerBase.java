@@ -518,8 +518,8 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
       // All this only, if the separator is set at all
       if (unescapedSeparator != null) {
         int firstSepIndex = line.indexOf(unescapedSeparator);
-        if (firstSepIndex > -1) {
-          entry = line.substring(0, firstSepIndex);
+        if (firstSepIndex > -1) {          
+          entry = line.substring(0, firstSepIndex);          
           // split the rest of the line real fast
           int lastSepIndex = firstSepIndex;
           int nrFeatures = 0;
@@ -537,6 +537,12 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
             nextSepIndex = line.indexOf(unescapedSeparator, lastSepIndex + 1);
             if (nextSepIndex < 0) { // if none found, use beyond end of String
               nextSepIndex = line.length();
+            }
+            // first of all, check if the field between the last and next seps is zero length, if yes
+            // just ignore it (see issue #24
+            if (nextSepIndex-lastSepIndex == 1) {
+              lastSepIndex = nextSepIndex;
+              continue;
             }
             // find the first equals character in the string section for this feature
             int equalsIndex = line.indexOf('=', lastSepIndex + 1);
