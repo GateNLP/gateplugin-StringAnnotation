@@ -44,7 +44,7 @@ The matching process works like this:
   * a comma-separated list of matching group numbers: these indicate the number of the binding group as counted from the first line of the expression. All these groups will, if they are part of a match, each get annotated by a separate annotation in the way specified in the remaining part of the rule action. Group number 0 stands for the whole match.
   * a right-arrow `=>` optionally preceded and/or followed by white space
   * the name of the annotation type to use for this rule, optionally followed by whitespace
-  * optionally, a list of feature assignments: feature assignments are a comma seperated list of assignments of the form `featurename=\$n` where n is a number, or of the form `featurename="string"` . If `\$n` is used, the value of the feature will be the nth matched group. 
+  * optionally, a list of feature assignments: feature assignments are a comma seperated list of assignments of the form `featurename=$n` where n is a number, or of the form `featurename="string"` . If `$n` is used, the value of the feature will be the nth matched group. 
 
 ## Examples ##
 
