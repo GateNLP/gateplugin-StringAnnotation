@@ -39,12 +39,12 @@ The matching process works like this:
 * there should be one or more pattern rules
 * a macro line is of the form `name=pattern` where `name` is any name consisting of ASCII letters, numbers and underscores, and `pattern` is any java pattern. The pattern can be substituted in a pattern line later by using the macro identifier `<<name>>`. Note that if name has not been identified in a macro line, then `<<name>>` will be left as is in a pattern line. Macros can also be substituted in later macro definition lines, building increasingly complex nested macros and patterns.
 * a pattern rule consists of one or more pattern lines followed by one or more action lines
-* pattern lines must start with a vertical bar (|) followed by a java regular expression. The final regular expression used consists of each line enclosed in non-binding parentheses and interpreted as alternatives.
+* pattern lines must start with a vertical bar (`|`) followed by a java regular expression. The final regular expression used consists of each line enclosed in non-binding parentheses and interpreted as alternatives.
 * action lines start with something like `1,2 => ` and must have the following content, in order:
   * a comma-separated list of matching group numbers: these indicate the number of the binding group as counted from the first line of the expression. All these groups will, if they are part of a match, each get annotated by a separate annotation in the way specified in the remaining part of the rule action. Group number 0 stands for the whole match.
-  * a right-arrow "=>" optionally preceded and/or followed by white space
+  * a right-arrow `=>` optionally preceded and/or followed by white space
   * the name of the annotation type to use for this rule, optionally followed by whitespace
-  * optionally, a list of feature assignments: feature assignments are a comma seperated list of assignments of the form featurename=$n where n is a number, or of the form featurename="string" . If $n is used, the value of the feature will be the nth matched group. 
+  * optionally, a list of feature assignments: feature assignments are a comma seperated list of assignments of the form `featurename=\$n` where n is a number, or of the form `featurename="string"` . If `\$n` is used, the value of the feature will be the nth matched group. 
 
 ## Examples ##
 
