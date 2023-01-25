@@ -1,0 +1,13 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  common-build:
+    uses: GateNLP/gate-top/.github/workflows/standard-module.yml@master
+    with:
+      deploy_site_to_pages: false
+    secrets: inherit
