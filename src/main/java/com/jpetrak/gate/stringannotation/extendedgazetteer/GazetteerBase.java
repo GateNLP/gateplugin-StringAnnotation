@@ -20,49 +20,48 @@
  */
 package com.jpetrak.gate.stringannotation.extendedgazetteer;
 
-import gate.Factory;
-import gate.FeatureMap;
-import gate.Resource;
-import gate.creole.ANNIEConstants;
-import gate.creole.AbstractLanguageAnalyser;
-import gate.creole.ResourceInstantiationException;
-import gate.creole.metadata.CreoleParameter;
-import gate.util.BomStrippingInputStreamReader;
-import gate.util.GateRuntimeException;
-import gate.util.Strings;
-
+import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 
 import org.apache.log4j.Logger;
+import org.yaml.snakeyaml.Yaml;
 
 import com.jpetrak.gate.stringannotation.extendedgazetteer.trie.GazStoreTrie3;
 import com.jpetrak.gate.stringannotation.utils.UrlUtils;
+
+import gate.Factory;
+import gate.FeatureMap;
 import gate.GateConstants;
+import gate.Resource;
+import gate.creole.ANNIEConstants;
+import gate.creole.AbstractLanguageAnalyser;
+import gate.creole.ResourceInstantiationException;
+import gate.creole.ResourceReference;
+import gate.creole.metadata.CreoleParameter;
 import gate.creole.metadata.Optional;
 import gate.gui.ActionsPublisher;
+import gate.util.BomStrippingInputStreamReader;
 import gate.util.Files;
-import gate.creole.ResourceReference;
-import java.awt.event.ActionEvent;
-import java.io.InputStreamReader;
-import java.util.zip.GZIPInputStream;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import static javax.swing.Action.SHORT_DESCRIPTION;
-
-import org.yaml.snakeyaml.Yaml;
+import gate.util.GateRuntimeException;
+import gate.util.Strings;
 
 /**
  * Common Base class for all gazetteer implementations. All these PRs need to
@@ -187,9 +186,17 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     // System.err.println("DEBUG running incrementGazStore");
     String uniqueGazStoreKey = genUniqueGazStoreKey();
     logger.info("Creating gazetteer for " + getConfigFileURL());
-    System.gc();
-    long startTime = System.currentTimeMillis();
-    long before = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
+
+    boolean profile = (System.getProperty("com.jpetrak.gate.stringannotation.profile") != null);
+
+    long startTime = 0, before = 0;
+
+    if (profile) {
+       System.gc();
+       startTime = System.currentTimeMillis();
+       before = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
+    }
+
     GazStore gs = loadedGazStores.get(uniqueGazStoreKey);
     if (gs != null) {
       // The FSM for this file/parm combination already has been compiled, just
@@ -197,7 +204,6 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
       gazStore = gs;
       gazStore.refcount++;
       logger.info("Reusing already generated GazStore for " + uniqueGazStoreKey);
-      System.err.println("Reusing already generated gaz store for " + uniqueGazStoreKey);
     } else {
       try {
         loadData();
@@ -211,21 +217,32 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
       // System.err.println("DEBUG addeed new gaz store with key " + uniqueGazStoreKey);
       logger.info("New GazStore loaded for " + uniqueGazStoreKey);
     }
-    long endTime = System.currentTimeMillis();
-    System.gc();
-    long after = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
-    logger.info("Gazetteer created in (secs):          " + ((endTime - startTime) / 1000.0));
-    logger.info("Heap memory increase (estimate,MB):   "
-            + String.format("%01.3f", ((after - before) / (1024.0 * 1024.0))));
-    logger.info(gazStore.statsString());
+
+    if (profile) {
+       long endTime = System.currentTimeMillis();
+       System.gc();
+       long after = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
+       logger.info("Gazetteer created in (secs):          " + ((endTime - startTime) / 1000.0));
+       logger.info("Heap memory increase (estimate,MB):   "
+               + String.format("%01.3f", ((after - before) / (1024.0 * 1024.0))));
+       logger.info(gazStore.statsString());
+    }
   }
 
   public synchronized void replaceGazStore() throws ResourceInstantiationException {
     String uniqueGazStoreKey = genUniqueGazStoreKey();
     logger.info("Replacing gazetteer for " + getConfigFileURL());
-    System.gc();
-    long startTime = System.currentTimeMillis();
-    long before = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
+
+    long startTime = 0, before = 0;
+
+    boolean profile = (System.getProperty("com.jpetrak.gate.stringannotation.profile") != null);
+
+    if (profile) {
+       System.gc();
+       startTime = System.currentTimeMillis();
+       before = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
+    }
+
     try {
       loadData();
       gazStore.compact();
@@ -235,13 +252,15 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     loadedGazStores.put(uniqueGazStoreKey, gazStore);
     logger.info("GazStore replaced for " + uniqueGazStoreKey);
 
-    long endTime = System.currentTimeMillis();
-    System.gc();
-    long after = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
-    logger.info("Gazetteer created in (secs):          " + ((endTime - startTime) / 1000.0));
-    logger.info("Heap memory increase (estimate,MB):   "
-            + String.format("%01.3f", ((after - before) / (1024.0 * 1024.0))));
-    logger.info(gazStore.statsString());
+    if (profile) {
+       long endTime = System.currentTimeMillis();
+       System.gc();
+       long after = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
+       logger.info("Gazetteer created in (secs):          " + ((endTime - startTime) / 1000.0));
+       logger.info("Heap memory increase (estimate,MB):   "
+               + String.format("%01.3f", ((after - before) / (1024.0 * 1024.0))));
+       logger.info(gazStore.statsString());
+    }
   }
 
   public synchronized void decrementGazStore() {

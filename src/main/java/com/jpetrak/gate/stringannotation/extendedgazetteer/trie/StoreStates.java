@@ -91,16 +91,27 @@ public class StoreStates implements Serializable {
       if(logger==null) {
         logger = Logger.getLogger(this.getClass().getName());
       }
+
+      boolean profile = (System.getProperty("com.jpetrak.gate.stringannotation.profile") != null);
+
       logger.info("Compacting states");
-      System.gc();
-      long startTime = System.currentTimeMillis();
-      long before = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
+      long startTime = 0, before = 0;
+
+      if (profile) {
+         System.gc();
+         startTime = System.currentTimeMillis();
+         before = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
+      }
+
       charMapStore = new StoreCharMapPhase2(charMapStore);
-      long endTime = System.currentTimeMillis();
-      long after = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
-      logger.info("Compacting finished in (secs):        "+((endTime-startTime)/1000.0));
-      logger.info("Heap memory increase (estimate,MB):   "+
-        String.format("%01.3f", ((after-before)/(1024.0*1024.0))));
+
+      if (profile) {
+         long endTime = System.currentTimeMillis();
+         long after = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
+         logger.info("Compacting finished in (secs):        "+((endTime-startTime)/1000.0));
+         logger.info("Heap memory increase (estimate,MB):   "+
+           String.format("%01.3f", ((after-before)/(1024.0*1024.0))));
+      }
     }
   }
   
