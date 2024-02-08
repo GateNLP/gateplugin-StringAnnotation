@@ -123,20 +123,6 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     }
   }
 
-  protected Boolean profile;
-
-  @CreoleParameter(
-        comment = "If enabled the PR will display information on memory usage etc.",
-        defaultValue = "false"
-  )
-  public void setProfile(Boolean profile) {
-     this.profile = profile;
-  }
-
-  public Boolean getProfile() {
-     return profile;
-  }
-
   public String getGazetteerFeatureSeparator() {
     return gazetteerFeatureSeparator;
   }
@@ -201,6 +187,8 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     String uniqueGazStoreKey = genUniqueGazStoreKey();
     logger.info("Creating gazetteer for " + getConfigFileURL());
 
+    boolean profile = (System.getProperty("com.jpetrak.gate.stringannotation.profile") != null);
+
     long startTime = 0, before = 0;
 
     if (profile) {
@@ -246,6 +234,8 @@ public abstract class GazetteerBase extends AbstractLanguageAnalyser implements 
     logger.info("Replacing gazetteer for " + getConfigFileURL());
 
     long startTime = 0, before = 0;
+
+    boolean profile = (System.getProperty("com.jpetrak.gate.stringannotation.profile") != null);
 
     if (profile) {
        System.gc();
